@@ -1,0 +1,79 @@
+{% load static %}
+<html lang="zxx">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <title>{% block title %} {{ seo_settings.title }} {% endblock %}</title>
+{% block meta_description %} {{ seo_settings.meta_description }}{% endblock %}
+{% block meta_keywords %} {{ seo_settings.meta_keywords }} {% endblock %}
+    <link rel="shortcut icon" href="{% static 'img/favicon.png' %}" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow&family=Barlow+Condensed&family=Gilda+Display&display=swap">
+    <link rel="stylesheet" href="{% static 'css/plugins.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+
+{% block canonical_url %}
+    {% if canonical_url %}
+        <link rel="canonical" href="{{ canonical_url }}">
+    {% endif %}
+{% endblock %}
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<!-- Open Graph meta tags -->
+<meta property="og:title" content="{% block og_title %}Default OG Title{% endblock %}">
+<meta property="og:description" content="{% block og_description %}Default OG Description{% endblock %}">
+<meta property="og:url" content="{% block og_url %}{{ canonical_url|default:'' }}{% endblock %}">
+<meta property="og:image" content="{% block og_image %}{% static 'default-og-image.jpg' %}{% endblock %}">
+<meta property="og:type" content="website">
+
+<!-- Favicon -->
+
+
+<link rel="icon" type="image/png" href="{% static 'img/favicon/favicon-96x96.png' %}" sizes="96x96" />
+<link rel="icon" type="image/svg+xml" href="{% static 'img/favicon/favicon.svg' %}" />
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" sizes="180x180" href="{% static 'img/favicon/apple-touch-icon.png' %}" />
+<link rel="manifest" href="{% static 'img/favicon/site.webmanifest' %}" />
+</head>
+<body>
+<!-- Preloader -->
+<!--    <div class="preloader-bg"></div>-->
+<!--    <div id="preloader">-->
+<!--        <div id="preloader-status">-->
+<!--            <div class="preloader-position loader"> <span></span> </div>-->
+<!--        </div>-->
+<!--    </div>-->
+    <!-- Progress scroll totop -->
+    <div class="progress-wrap cursor-pointer">
+        <svg class="progress-circle svg-content" width="100%" height="100%" viewBox="-1 -1 102 102">
+            <path d="M50,1 a49,49 0 0,1 0,98 a49,49 0 0,1 0,-98" />
+        </svg>
+    </div>
+{% block content %}
+
+{% endblock %}
+
+
+    <!-- jQuery -->
+    <script src="{% static 'js/jquery-3.6.3.min.js' %}"></script>
+    <script src="{% static 'js/jquery-migrate-3.0.0.min.js' %}"></script>
+    <script src="{% static 'js/modernizr-2.6.2.min.js' %}"></script>
+    <script src="{% static 'js/imagesloaded.pkgd.min.js' %}"></script>
+    <script src="{% static 'js/jquery.isotope.v3.0.2.js' %}"></script>
+    <script src="{% static 'js/pace.js' %}"></script>
+    <script src="{% static 'js/popper.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/scrollIt.min.js' %}"></script>
+    <script src="{% static 'js/jquery.waypoints.min.js' %}"></script>
+    <script src="{% static 'js/owl.carousel.min.js' %}"></script>
+    <script src="{% static 'js/jquery.stellar.min.js' %}"></script>
+    <script src="{% static 'js/jquery.magnific-popup.js' %}"></script>
+    <script src="{% static 'js/YouTubePopUp.js' %}"></script>
+    <script src="{% static 'js/select2.js' %}"></script>
+    <script src="{% static 'js/datepicker.js' %}"></script>
+    <script src="{% static 'js/smooth-scroll.min.js' %}"></script>
+    <script src="{% static 'js/custom.js' %}"></script>
+</body>
+</html>

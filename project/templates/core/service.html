@@ -1,0 +1,64 @@
+<!-- Services -->
+<section class="services section-padding">
+    <div class="container">
+        <div class="row">
+                <div class="col-md-12">
+                    <div class="section-subtitle">Our Services</div>
+                    <div class="section-title">Facilities</div>
+                </div>
+            </div>
+        {% for service in services %}
+            <div class="row">
+                {% if forloop.counter0|divisibleby:2 %}
+                    <div class="col-md-6 p-0 animate-box" data-animate-effect="fadeInLeft">
+                        <div class="img left">
+                            <a href="">
+                                <img src="{{ service.image.url }}" alt="{{ service.alt_text }}">
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-6 p-0 bg-cream valign animate-box" data-animate-effect="fadeInRight">
+                        <div class="content">
+                            <div class="cont text-left">
+                                <div class="info">
+                                    <h6>Discover</h6>
+                                </div>
+                                <h4>{{ service.title }}</h4>
+                                <p>{{ service.description }}</p>
+                                <div class="butn-dark">
+<!--                                    <a href="">-->
+<!--                                        <span>Learn More</span>-->
+<!--                                    </a>-->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="col-md-6 bg-cream p-0 order2 valign animate-box" data-animate-effect="fadeInLeft">
+                        <div class="content">
+                            <div class="cont text-left">
+                                <div class="info">
+                                    <h6>Experiences</h6>
+                                </div>
+                                <h4>{{ service.title }}</h4>
+                                <p>{{ service.description }}</p>
+                                <div class="butn-dark">
+<!--                                    <a href="">-->
+<!--                                        <span>Learn More</span>-->
+<!--                                    </a>-->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 p-0 order1 animate-box" data-animate-effect="fadeInRight">
+                        <div class="img">
+                            <a href="">
+                                <img src="{{ service.image.url }}" alt="{{ service.alt_text }}">
+                            </a>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        {% endfor %}
+    </div>
+</section>

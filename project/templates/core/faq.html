@@ -1,0 +1,28 @@
+{% load static %}
+
+<section class="section-padding bg-cream">
+    <div class="container">
+         <div class="row">
+                <div class="col-md-12">
+                    <div class="section-subtitle">FAQ</div>
+                    <div class="section-title">FAQ</div>
+                </div>
+            </div>
+        <div class="row">
+            <div class="col-md-12">
+                <ul class="accordion-box clearfix">
+                    {% for faq in faqs %}
+                        <li class="accordion block">
+                            <div class="acc-btn">{{ faq.question }}</div>
+                            <div class="acc-content">
+                                <div class="content">
+                                    <div class="text">{{ faq.answer }}</div>
+                                </div>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>

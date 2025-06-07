@@ -1,0 +1,9 @@
+{% block content %}
+  <div style="max-width: 800px; margin: auto;">
+    <h1>{{ blog.title }}</h1>
+    <p><strong>Category:</strong> {{ blog.category }} | <strong>Date:</strong> {{ blog.date }}</p>
+    <img src="{{ blog.image.url }}" style="width: 100%; height: auto; border-radius: 10px; margin-bottom: 20px;" alt="{{ blog.title }}">
+    <div>{{ blog.content|linebreaks }}</div>
+    <a href="">← Back to Blog</a>
+  </div>
+{% endblock %}

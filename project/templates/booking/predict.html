@@ -1,0 +1,25 @@
+<form id="predict-form" method="POST">
+    {% csrf_token %}
+    <select name="trip_type">
+        <option value="one_way">One Way</option>
+        <option value="round_trip">Round Trip</option>
+    </select>
+    <!-- Other inputs -->
+    <button type="submit">Predict Price</button>
+</form>
+<div id="price-result"></div>
+
+<script>
+    document.getElementById('predict-form').onsubmit = async (e) => {
+        e.preventDefault();
+        const response = await fetch('', {
+            method: 'POST',
+            body: new FormData(e.target)
+        });
+        const data = await response.json();
+        if (data.success) {
+            document.getElementById('price-result').innerHTML =
+                `Predicted Price: $${data.predicted_price}`;
+        }
+    }
+</script>

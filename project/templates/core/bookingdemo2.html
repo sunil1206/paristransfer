@@ -1,0 +1,340 @@
+{% extends 'core/base.html' %}
+
+{% load static %}
+{% block content %}
+
+
+<!-- Reservation & Booking Form -->
+<section class="testimonials">
+    <div class="background bg-img bg-fixed section-padding pb-0" data-background="{% static 'img/slider/.jpg' %}"
+         data-overlay-dark="2">
+        <div class="container">
+            <div class="row">
+                <!-- Reservation -->
+
+                <!-- Booking Form -->
+                <div class="col-md-12">
+                    <div class="booking-box">
+                        <div class="head-box">
+                            <h6>Cabs & Booking</h6>
+                            <h4> Booking Form</h4>
+                            {% if predicted_price %}
+    <div class="result">
+        <h3 style="color:black;">Predicted Price: EUR{{ predicted_price }}</h3>
+        <h5 style="color:black;">Booking Confirmation</h5>
+<p style="color:black;">Thank you for booking with us, {{ booking.first_name }}!</p>
+<p style="color:black;">Your booking has been confirmed, and the price has been set at ${{ booking.price }}.</p>
+<p style="color:black;">We have sent a confirmation email to {{ booking.email }}.</p>
+    </div>
+    {% endif %}
+                        </div>
+                        <div class="booking-inner clearfix">
+                            <form id="bookingForm" method="POST" action="" class="form1 clearfix">
+                                {% csrf_token %}
+
+                                <!-- Step 1: Trip Details -->
+                                <fieldset class="form-step">
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <label class="form-label d-block">Trip Type</label>
+                                            <select class="select2 select" name="trip_type" id="trip_type"
+                                                    style="width: 100%">
+                                                <option value="" disabled selected>Type of Journey</option>
+                                                <option value="0">OneWay</option>
+                                                <option value="1">Round Trip</option>
+                                                <!--                                                <option value="3">Multiple</option>-->
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label d-block">Pickup Location</label>
+                                            <select class="select2 select" name="pickup_location" style="width: 100%">
+                                                <option value="" disabled selected>Select Pickup Location</option>
+                                                <option value="0">BEAUVAIS</option>
+                                                <option value="1">Bayeux</option>
+                                                <option value="2">CDG(Charles de Gaulle Airport)</option>
+                                                <option value="3">Fontainebleau</option>
+                                                <option value="4">ORLY (Orly Airport)</option>
+                                                <option value="5">Paris hotels / Train Stations</option>
+                                                <option value="6">Reims</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label d-block">Drop Off Location</label>
+                                            <select class="select2 select" name="dropoff_location" style="width: 100%">
+                                                <option value="" disabled selected>Select Drop Off</option>
+                                                 <option value="0">BEAUVAIS</option>
+                                                <option value="1">CDG</option>
+                                                <option value="2">Disneyland</option>
+                                                <option value="3">ORLY (Orly Airport)</option>
+                                                <option value="4">Paris hotels / Train Stations</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label d-block">Adults</label>
+                                            <select class="select2 select" name="adults" id="adults"
+                                                    style="width: 100%">
+                                                <option value="" disabled selected>Number of Adults</option>
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="4">4</option>
+                                                <option value="5">5</option>
+                                                <option value="6">6</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label d-block">Children</label>
+                                            <select class="select2 select" name="children" id="children"
+                                                    style="width: 100%">
+                                                <option value="" disabled selected>Number of Children</option>
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="4">4</option>
+                                                <option value="5">5</option>
+                                                <option value="6">6</option>
+                                                <option value="7">7</option>
+                                                <option value="8">8</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <label class="form-label d-block">Luggage</label>
+                                            <select class="select2 select" name="luggage" id="luggage"
+                                                    style="width: 100%">
+                                                <option value="" disabled selected>Number of Luggage</option>
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="4">4</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label d-block">Transport Type</label>
+                                            <select class="select2 select" name="transport_type" id="transport-type"
+                                                    style="width: 100%">
+                                                <option value="" disabled selected>Select Transport Type</option>
+                                                <option value="0">Car</option>
+                                                <option value="1">Van</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-3">
+                                            <label class="form-label d-block">Pickup Time</label>
+<!--                                            <label>Pickup Time</label>-->
+<!--                                            <input type="number" name="pickup_time" id="pickup_time" required><br><br>-->
+                                             <select class="select2 select" name="pickup_time" id="pickup_time"
+                                                    style="width: 100%">
+                                                <option value="" disabled selected>Pickup Time</option>
+                                                <option value="0">  After 10</option>
+                                                <option value="1">Before 10</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3" id="return_time_container">
+                                            <label class="form-label d-block">Return Time</label>
+<!--                                            <input type="number" name="return_time" id="return_time"><br><br>-->
+                                            <select class="select2 select" name="return_time" id="return_time"
+                                                    style="width: 100%">
+                                                <option value="" disabled selected>Return Time</option>
+                                                <option value="0">  After 10</option>
+                                                <option value="1">Before 10</option>
+                                            </select>
+                                        </div>
+                                        <!--            <div class="col-md-12 text-right">-->
+                                        <!--                <button type="submit" class="btn-form1-submit">Predict Price</button>-->
+                                        <!--            </div>-->
+                                        <div class="col-md-12 text-right">
+                                            <button type="button" class="btn-form1-submit next-btn">Next</button>
+                                        </div>
+                                    </div>
+                                </fieldset>
+
+                                <!-- Step 2: Additional Details -->
+                                <fieldset class="form-step" style="display: none;">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label class="form-label d-block">Check-in Date</label>
+                                            <input type="date" class="form-control" name="checkin_date"  id="checkin_date_container">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label d-block">Check-out Date</label>
+                                            <input type="date" class="form-control"  id="checkout_date_container" name="checkout_date">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label d-block">Flight/Train Number</label>
+                                            <input type="text" class="form-control" name="flight_train_no" placeholder="Flight/Train Number">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label d-block">Child Seats</label>
+                                            <input type="number" class="form-control" name="child_seats" min="0"
+                                                   placeholder="Child Seats">
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label d-block">Booster Seats</label>
+                                            <input type="number" class="form-control" name="booster_seats" min="0"
+                                                   max="2">
+                                        </div>
+                                        <div class="col-md-6 text-right">
+
+                                            <button type="button" class="btn-form1-submit prev-btn">Previous</button>
+                                        </div>
+                                        <div class="col-md-6 text-right">
+                                            <button type="button" class="btn-form1-submit next-btn">Next</button>
+                                        </div>
+                                    </div>
+                                </fieldset>
+
+                                <!-- Step 3: Personal Details -->
+                                <fieldset class="form-step" style="display: none;">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label class="form-label d-block">First Name</label>
+                                            <input type="text" class="form-control" name="first_name"
+                                                   placeholder="First Name" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label d-block">Last Name</label>
+                                            <input type="text" class="form-control" name="last_name"
+                                                   placeholder="Last Name" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label d-block">Email</label>
+                                            <input type="email" class="form-control" name="email" placeholder="Email"
+                                                   required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label d-block">Phone</label>
+                                            <input type="tel" class="form-control" name="phone" placeholder="Phone"
+                                                   required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label d-block">Country Code</label>
+                                            <select class="form-control select2" name="country_code" required>
+                                                <option value="" disabled selected>Select Country Code</option>
+                                                <option value="+1">+1 (USA)</option>
+                                                <option value="+91">+91 (India)</option>
+                                                <option value="+44">+44 (UK)</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="input1_wrapper">
+                                            <label class="form-label d-block">Promo Code</label>
+                                            <input type="text" class="form-control" name="promo_code"
+                                                   placeholder="Enter Promo Code (optional)">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <label class="form-label d-block">Notes</label>
+                                            <textarea class="form-control" name="notes"
+                                                      placeholder="Additional Notes"></textarea>
+                                        </div>
+                                        <div class="col-md-6 text-right">
+                                            <button type="button" class="btn-form1-submit prev-btn">Previous</button>
+                                        </div>
+                                        <div class="col-md-6 text-right">
+                                            <button type="submit" class="btn-form1-submit">Submit</button>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Include necessary scripts -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        var currentStep = 0;
+        var steps = $(".form-step");
+        function showStep(index) {
+            steps.hide();
+            $(steps[index]).show();
+        }
+
+        $(".next-btn").click(function() {
+            if (currentStep < steps.length - 1) {
+                currentStep++;
+                showStep(currentStep);
+            }
+        });
+
+        $(".prev-btn").click(function() {
+            if (currentStep > 0) {
+                currentStep--;
+                showStep(currentStep);
+            }
+        });
+
+        // Initialize the form by showing the first step
+        showStep(currentStep);
+    });
+
+
+
+
+
+
+</script>
+
+<script>
+        $(document).ready(function() {
+            $('#return_time_container').hide(); // Hide return time field initially
+
+            $('#trip_type').change(function() {
+                var tripType = $(this).val();
+                if (tripType == '1') { // Show return time field for round trip
+                    $('#return_time_container').show();
+                    $('#return_time').prop('required', true);
+                } else { // Hide return time field for other trip types
+                    $('#return_time_container').hide();
+                    $('#return_time').prop('required', false);
+                    $('#return_time').val(0); // Set return time to 0 if hidden
+                }
+            });
+
+            $('#priceForm').on('submit', function(event) {
+                if ($('#trip_type').val() != '1') {
+                    $('#return_time').val(0); // Set return time to 0 if not round trip
+                }
+            });
+        });
+
+
+</script>
+<script>
+    $(document).ready(function () {
+        // Initially hide return time and checkout date
+        $('#booking_return_time_container').hide();
+        $('#checkout_date_container').hide();
+
+        // Handle trip type changes
+        $('select[name="trip_type"]').on('change', function () {
+            const tripType = $(this).val();
+
+            if (tripType === '1') {
+                // Round Trip selected
+                $('#booking_return_time_container').show();
+                $('#checkout_date_container').show();
+                $('#booking_return_time').prop('required', true);
+                $('#checkout_date').prop('required', true);
+            } else {
+                // OneWay selected
+                $('#booking_return_time_container').hide();
+                $('#checkout_date_container').hide();
+                $('#booking_return_time').prop('required', false).val('');
+                $('#checkout_date').prop('required', false).val('');
+            }
+        });
+
+        // Trigger change on page load to apply logic if pre-filled
+        $('select[name="trip_type"]').trigger('change');
+    });
+
+</script>
+
+{% endblock %}

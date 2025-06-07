@@ -1,0 +1,44 @@
+<!-- Cab Section -->
+<section class="rooms1 section-padding bg-cream" data-scroll-index="1">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="section-subtitle">The Luxury Travel With Us</div>
+                <div class="section-title">Cab for Ride</div>
+            </div>
+        </div>
+        <div class="row">
+            {% for cab in cabs %}
+            <div class="col-md-6">
+                <div class="item">
+                    <div class="position-re o-hidden">
+                        <img src="{{ cab.image.url }}" alt="{{ cab.name }}">
+                    </div>
+                    <span class="category">
+                        <a href="{% url 'booking' %}">Book</a>
+                    </span>
+                    <div class="con">
+<!--                        <h6><a href="">{{ cab.price_per_km }}$ / km</a></h6>-->
+                        <h5>{{ cab.name }}</h5>
+                        <div class="line"></div>
+                        <div class="row facilities">
+                            <div class="col col-md-7">
+                                <ul>
+                                    {% for amenity in cab.amenities.all %}
+                                    <li><i class="{{ amenity.icon }}"></i></li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            <div class="col col-md-5 text-end">
+                                <div class="permalink">
+<!--                                    Details <i class="ti-arrow-right"></i>-->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>

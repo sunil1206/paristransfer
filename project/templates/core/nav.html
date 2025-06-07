@@ -1,0 +1,67 @@
+{% load static %}
+<!-- Navbar -->
+    <nav class="navbar navbar-expand-lg">
+        <div class="container">
+            <!-- Logo -->
+<!--            <div class="logo-wrapper">-->
+<!--                <a class="logo" href="{% url 'index' %}"> <img src="{% static 'img/logo.svg' %}" class="logo-img" alt="paris transfer"> </a>-->
+<!--                 <a class="logo" href="index.html"> <h2>THE PARIS <span>TRANSFER</span></h2> </a>-->
+<!--            </div>-->
+            <div class="site-header__branding">
+  <a class="site-header__logo" href="{% url 'index' %}">
+    <img
+      src="{% static 'img/logo4.png' %}"
+      alt="The Paris Transfer"
+      class="site-header__logo-img"
+    >
+  </a>
+  <h1 class="site-header__title">
+<!--    THE PARIS <span class="site-header__highlight">TRANSFER</span>-->
+  </h1>
+</div>
+            <!-- Button -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"><i class="ti-menu"></i></span> </button>
+            <!-- Menu -->
+            <div class="collapse navbar-collapse" id="navbar">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item dropdown"> <a class="nav-link" href="{% url 'index' %}" role="button" >Home <i class="ti-angle-down"></i></a>
+
+                    </li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About</a></li>
+<!--                    <li class="nav-item"><a class="nav-link" href="{% url 'service' %}">Service</a></li>-->
+                    <li class="nav-item"><a class="nav-link" href="{% url 'booking' %}">Booking</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'contact' %}">Contact</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+<style>
+    .site-header__branding {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.site-header__logo {
+  display: inline-block;
+  /* adjust padding/margins as needed */
+}
+
+.site-header__logo-img {
+  width: 250px;   /* new logo width */
+  height: auto;
+}
+
+.site-header__title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  text-transform: uppercase;
+}
+
+.site-header__highlight {
+  color: #e63946; /* accent color for “TRANSFER” */
+}
+
+</style>

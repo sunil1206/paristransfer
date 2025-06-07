@@ -1,0 +1,35 @@
+{% load static %}
+
+<section class="about section-padding">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6 mb-30 animate-box" data-animate-effect="fadeInUp">
+                <span>
+                    {% for i in "12345"|make_list %}
+                        {% if i <= about.rating %}
+                            <i class="star-rating"></i>
+                        {% else %}
+                            <i class="star-rating-empty"></i>
+                        {% endif %}
+                    {% endfor %}
+                </span>
+                <div class="section-subtitle">{{ about.subtitle }}</div>
+                <div class="section-title">{{ about.title }}</div>
+                <p>{{ about.description1 }}</p>
+                <p>{{ about.description2 }}</p>
+                <div class="reservations">
+                    <div class="icon"><span class="flaticon-call"></span></div>
+                    <div class="text">
+                        <p>Reservation</p> <a href="tel:{{ about.phone_number }}">{{ about.phone_number }}</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col col-md-3 animate-box" data-animate-effect="fadeInUp">
+                <img src="{{ about.image1.url }}" alt="{{ about.alt_image1 }}" class="mt-90 mb-30">
+            </div>
+            <div class="col col-md-3 animate-box" data-animate-effect="fadeInUp">
+                <img src="{{ about.image2.url }}" alt="{{ about.alt_image2 }}">
+            </div>
+        </div>
+    </div>
+</section>

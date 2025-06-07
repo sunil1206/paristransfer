@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taxi Price Prediction</title>
+</head>
+<body>
+    <h2>Taxi Price Prediction</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <label for="trip_type">Trip Type:</label>
+        <input type="number" name="trip_type" id="trip_type" required><br><br>
+
+        <label for="pickup_location">Pickup Location:</label>
+        <input type="number" name="pickup_location" id="pickup_location" required><br><br>
+
+        <label for="dropoff_location">Dropoff Location:</label>
+        <input type="number" name="dropoff_location" id="dropoff_location" required><br><br>
+
+        <label for="adults">Number of Adults:</label>
+        <input type="number" name="adults" id="adults" required><br><br>
+
+        <label for="children">Number of Children:</label>
+        <input type="number" name="children" id="children" required><br><br>
+
+        <label for="children">Number of Transport type:</label>
+        <input type="number" name="transport_type" id="transport_type" required><br><br>
+
+        <label for="luggage">Luggage Count:</label>
+        <input type="number" name="luggage" id="luggage" required><br><br>
+
+        <label for="pickup_time">Pickup Time (24hr format):</label>
+        <input type="number" name="pickup_time" id="pickup_time" required><br><br>
+
+        <label for="return_time">Return Time (24hr format):</label>
+        <input type="number" name="return_time" id="return_time" required><br><br>
+
+        <button type="submit">Predict Price</button>
+    </form>
+
+    {% if predicted_price %}
+        <h3>Predicted Price: {{ predicted_price }}</h3>
+    {% endif %}
+</body>
+</html>
+
+
+<!--<!DOCTYPE html>-->
+<!--<html lang="en">-->
+<!--<head>-->
+<!--    <meta charset="UTF-8">-->
+<!--    <meta name="viewport" content="width=device-width, initial-scale=1.0">-->
+<!--    <title>Paris Transfer Booking2</title>-->
+<!--</head>-->
+<!--<body>-->
+<!--    <h2>Paris Transfer Booking</h2>-->
+
+<!--    {% if step == 1 %}-->
+<!--        &lt;!&ndash; Step 1: Trip Details &ndash;&gt;-->
+<!--        <form method="POST">-->
+<!--            {% csrf_token %}-->
+<!--            <input type="hidden" name="step" value="1">-->
+
+<!--            <label for="trip_type">Trip Type:</label>-->
+<!--            <select name="trip_type" id="trip_type" required>-->
+<!--                <option value="one-way">One-Way</option>-->
+<!--                <option value="round-trip">Round-Trip</option>-->
+<!--            </select><br><br>-->
+
+<!--            <label for="pickup_location">Pickup Location:</label>-->
+<!--            <input type="text" name="pickup_location" id="pickup_location" required><br><br>-->
+
+<!--            <label for="dropoff_location">Dropoff Location:</label>-->
+<!--            <input type="text" name="dropoff_location" id="dropoff_location" required><br><br>-->
+
+<!--            <label for="adults">Number of Adults:</label>-->
+<!--            <input type="number" name="adults" id="adults" min="1" required><br><br>-->
+
+<!--            <label for="children">Number of Children:</label>-->
+<!--            <input type="number" name="children" id="children" min="0" required><br><br>-->
+
+<!--            <label for="transport_type">Transport Type:</label>-->
+<!--            <select name="transport_type" id="transport_type" required>-->
+<!--                {% for value, label in transport_options %}-->
+<!--                    <option value="{{ value }}">{{ label }}</option>-->
+<!--                {% endfor %}-->
+<!--            </select><br><br>-->
+
+<!--            <label for="luggage">Luggage Count:</label>-->
+<!--            <input type="number" name="luggage" id="luggage" min="0" required><br><br>-->
+
+<!--            <label for="pickup_time">Pickup Time (e.g., 14:30):</label>-->
+<!--            <input type="text" name="pickup_time" id="pickup_time" pattern="([01]?[0-9]|2[0-3]):[0-5][0-9]" placeholder="HH:MM" required><br><br>-->
+
+<!--            <div id="return_time_div" style="display: none;">-->
+<!--                <label for="return_time">Return Time (e.g., 18:00):</label>-->
+<!--                <input type="text" name="return_time" id="return_time" pattern="([01]?[0-9]|2[0-3]):[0-5][0-9]" placeholder="HH:MM"><br><br>-->
+<!--            </div>-->
+
+<!--            <button type="submit">Predict Price</button>-->
+<!--        </form>-->
+
+<!--        <script>-->
+<!--            document.getElementById("trip_type").addEventListener("change", function() {-->
+<!--                var returnTimeDiv = document.getElementById("return_time_div");-->
+<!--                if (this.value === "round-trip") {-->
+<!--                    returnTimeDiv.style.display = "block";-->
+<!--                    document.getElementById("return_time").required = true;-->
+<!--                } else {-->
+<!--                    returnTimeDiv.style.display = "none";-->
+<!--                    document.getElementById("return_time").required = false;-->
+<!--                }-->
+<!--            });-->
+<!--        </script>-->
+
+<!--    {% elif step == 2 %}-->
+<!--        &lt;!&ndash; Step 2: Personal Details &ndash;&gt;-->
+<!--        <h3>Predicted Price: €{{ predicted_price }}</h3>-->
+<!--        <form method="POST">-->
+<!--            {% csrf_token %}-->
+<!--            <input type="hidden" name="step" value="2">-->
+<!--            {% for field, value in trip_data.items %}-->
+<!--                <input type="hidden" name="{{ field }}" value="{{ value }}">-->
+<!--            {% endfor %}-->
+<!--            <input type="hidden" name="predicted_price" value="{{ predicted_price }}">-->
+
+<!--            <label for="first_name">First Name:</label>-->
+<!--            <input type="text" name="first_name" id="first_name" required><br><br>-->
+
+<!--            <label for="last_name">Last Name:</label>-->
+<!--            <input type="text" name="last_name" id="last_name" required><br><br>-->
+
+<!--            <label for="email">Email:</label>-->
+<!--            <input type="email" name="email" id="email" required><br><br>-->
+
+<!--            <label for="country_code">Country Code (e.g., +33):</label>-->
+<!--            <input type="text" name="country_code" id="country_code" required><br><br>-->
+
+<!--            <label for="phone">Phone Number:</label>-->
+<!--            <input type="text" name="phone" id="phone" required><br><br>-->
+
+<!--            <label for="notes">Notes (Optional):</label>-->
+<!--            <textarea name="notes" id="notes"></textarea><br><br>-->
+
+<!--            <button type="submit">Confirm Booking</button>-->
+<!--        </form>-->
+
+<!--    {% elif step == "complete" %}-->
+<!--        &lt;!&ndash; Booking Confirmation &ndash;&gt;-->
+<!--        <h3>Booking Confirmed!</h3>-->
+<!--        <p>Thank you, {{ booking.first_name }} {{ booking.last_name }}!</p>-->
+<!--        <p>Your {{ booking.trip_type }} trip from {{ booking.pickup_location }} to {{ booking.dropoff_location }} has been booked.</p>-->
+<!--        <p>Total Price: €{{ booking.price }}</p>-->
+<!--        <p>We’ll send a confirmation to {{ booking.email }}.</p>-->
+<!--    {% endif %}-->
+<!--</body>-->
+<!--</html>-->

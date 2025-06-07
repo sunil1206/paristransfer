@@ -1,0 +1,31 @@
+{% extends 'core/base.html' %}
+{% load static %}
+<title>{% block title %} {{ seo_settings.title }} {% endblock %}</title>
+{% block meta_description %} {{ seo_settings.meta_description }}{% endblock %}
+{% block meta_keywords %} {{ seo_settings.meta_keywords }} {% endblock %}
+{% block canonical_url %}
+{% if canonical_url %}
+        <link rel="canonical" href="{{ canonical_url }}">
+    {% endif %}
+{% endblock %}
+
+{% block og_title %}We are Expert Motor and Generator Servicing{% endblock %}
+{% block og_description %} generators including repairing and re-winding work since 1990. We have fully fledged, well equipped work shop & Office with professionally trained technicians at Pallinada, Palarivattom, Ernakulam. We also undertake the AMC for Motors, Generators etc. {% endblock %}
+{% block og_url %} {{ canonical_url }} {% endblock %}
+{% block og_image %} URL{% endblock %}
+
+{% block content %}
+<!-- Header Banner -->
+    <div class="banner-header section-padding valign bg-img bg-fixed" data-overlay-dark="4" data-background="{% static 'img/slider/1.jpg' %}">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12 caption mt-90">
+                    <h5></h5>
+                    <h1>Contact Us</h1>
+                </div>
+            </div>
+        </div>
+    </div>
+{% include 'core/nav.html' %}
+{% include 'core/contact.html' %}
+{% endblock %}

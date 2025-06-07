@@ -1,0 +1,529 @@
+{% extends 'core/base.html' %}
+
+{% load static %}
+{% block content %}
+
+
+<!-- Reservation & Booking Form -->
+<section class="testimonials">
+    <div class="background bg-img bg-fixed section-padding pb-0"
+         style=""
+         data-background="{% static 'img/slider/4.png' %}"
+         data-overlay-dark="0">
+        <div class="container">
+            <div class="row">
+                <!-- Reservation -->
+
+                <!-- Booking Form -->
+                <div class="col-md-12">
+                    <div class="booking-box">
+                        <div class="head-box">
+                            <h6>Cabs & Booking</h6>
+                            <h4> Booking Form</h4>
+                            {% if predicted_price %}
+                            <div class="result">
+                                <h3 style="color:black;">Predicted Price: € {{ predicted_price }}</h3>
+                                <h5 style="color:black;">Booking Confirmation</h5>
+                                <p style="color:black;">Thank you for booking with us, {{ booking.first_name }}!</p>
+                                <p style="color:black;">Your booking has been confirmed, and the price has been set at
+                                    € {{ booking.price }}.</p>
+                                <p style="color:black;">We have sent a confirmation email to {{ booking.email }}.</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% if form.errors %}
+  <div class="alert alert-danger">
+    <strong>Form Errors:</strong>
+    <ul>
+      {% for field in form %}
+        {% for error in field.errors %}
+          <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+        {% endfor %}
+      {% endfor %}
+      {% for error in form.non_field_errors %}
+        <li>{{ error }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endif %}
+
+                        <div class="booking-inner clearfix">
+                            <form id="bookingForm" method="POST" action="" class="form1 clearfix">
+                                {% csrf_token %}
+                                <!-- Step 1: Trip Details -->
+                                <fieldset class="form-step">
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <label class="form-label d-block">Trip Type</label>
+                                            <select class="select2 select" name="trip_type" id="trip_type"
+                                                    style="width: 100%" required>
+                                                <option value="" disabled selected>Type of Journey</option>
+                                                <option value="One Way">One Way</option>
+                                                <option value="Round Trip">Round Trip</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label d-block">Pickup Location</label>
+                                            <select class="select2 select" name="pickup_location" style="width: 100%"
+                                                    required>
+                                                <option value="" disabled selected>Select Pickup Location</option>
+                                                <option value="BEAUVAIS">BEAUVAIS</option>
+                                                <option value="Bayeux">Bayeux</option>
+                                                <option value="CDG(Charles de Gaulle Airport)">CDG(Charles de Gaulle
+                                                    Airport)
+                                                </option>
+                                                <option value="Fontainebleau">Fontainebleau</option>
+                                                <option value="ORLY (Orly Airport)">ORLY (Orly Airport)</option>
+                                                <option value="Paris hotels / Train Stations">Paris hotels / Train
+                                                    Stations
+                                                </option>
+                                                <option value="Reims">Reims</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label d-block">Drop Off Location</label>
+                                            <select class="select2 select" name="dropoff_location" style="width: 100%"
+                                                    required>
+                                                <option value="" disabled selected>Select Drop Off</option>
+                                                <option value="BEAUVAIS">BEAUVAIS</option>
+                                                <option value="CDG">CDG</option>
+                                                <option value="Disneyland">Disneyland</option>
+                                                <option value="ORLY (Orly Airport)">ORLY (Orly Airport)</option>
+                                                <option value="Paris hotels / Train Stations">Paris hotels / Train
+                                                    Stations
+                                                </option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                        <label class="form-label d-block"  for="id_pickup_address">Pickup Address</label>
+                                        {{ form.pickup_address }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label d-block"  for="id_dropoff_address">Dropoff Address</label>
+                                        {{ form.dropoff_address }}
+                                    </div>
+                                        <div class="col-md-3">
+                                            <label class="form-label d-block">Transport Type</label>
+                                            <select class="select2 select" name="transport_type" style="width: 100%"
+                                                    required>
+                                                <option value="" disabled selected>Select Transport Type</option>
+                                                <option value="Car">Car</option>
+                                                <option value="Van">Van</option>
+                                            </select>
+                                        </div>
+
+
+<!--                                     form.pickup_latitude }}-->
+<!--                                    { form.pickup_longitude }}-->
+<!--                                    { form.dropoff_latitude }}-->
+<!--                                    { form.dropoff_longitude }}-->
+
+                                        <div class="col-md-2">
+                                            <label class="form-label d-block">Adults</label>
+                                            <select class="select2 select" name="adults" style="width: 100%" required>
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="4">4</option>
+                                                <option value="5">5</option>
+                                                <option value="6">6</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-2">
+                                            <label class="form-label d-block">Children</label>
+                                            <select class="select2 select" name="children" style="width: 100%" required>
+                                                <option value="0">0</option>
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="4">4</option>
+                                                <option value="5">5</option>
+                                                <option value="6">6</option>
+                                                <option value="7">7</option>
+                                                <option value="8">8</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-2">
+                                            <label class="form-label d-block">Luggage</label>
+                                            <select class="select2 select" name="luggage" style="width: 100%" required>
+                                                <option value="1">1</option>
+                                                <option value="2">2</option>
+                                                <option value="3">3</option>
+                                                <option value="4">4</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-3">
+                                            <label class="form-label d-block">Pickup Time</label>
+                                            <select class="select2 select" name="pickup_time" style="width: 100%"
+                                                    required>
+                                                <option value="0">Between 10 PM - 6 AM</option>
+                                                <option value="1">Between 6 AM -10 PM</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-3" id="return_time_container">
+                                            <label class="form-label d-block">Return Time</label>
+                                            <select class="select2 select" name="return_time" style="width: 100%">
+                                                <option value="0">Between 10 PM - 6 AM</option>
+                                                <option value="1">Between 6 AM -10 PM</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="col-md-12 text-right">
+                                            <button type="button" class="btn-form1-submit next-btn">Next</button>
+                                        </div>
+                                    </div>
+                                </fieldset>
+
+                                <!-- Step 3: Personal Details -->
+                                <fieldset class="form-step" style="display: none;">
+                                    <div class="row">
+                                        <div class="col-md-5">
+                                            <label class="form-label d-block">First Name</label>
+                                            <input type="text" class="form-control" name="first_name"
+                                                   placeholder="First Name" style="background-color: white;font-size: 15px;line-height: 28px;padding: 17px 49px 17px 20px;color: #055fa0;" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label d-block">Last Name</label>
+                                            <input type="text" class="form-control common_style" name="last_name"
+                                                   placeholder="Last Name" style="background-color: white;font-size: 15px;line-height: 28px;padding: 17px 49px 17px 20px;color: #055fa0;"  required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="form-label d-block">Email</label>
+                                            <input type="email" class="form-control" name="email" placeholder="Email" style="background-color: white;font-size: 15px;line-height: 28px;padding: 17px 49px 17px 20px;color: #055fa0;"
+                                                   required>
+                                        </div>
+                                        <div class="col-md-3">
+    <label class="form-label d-block">Check-in Date</label>
+    <input type="date" class="form-control input datepicker hasDatepicker" name="checkin_date" style="background-color: white;font-size: 15px;line-height: 28px;padding: 17px 49px 17px 20px;color: #055fa0;"
+                                                   required>
+</div>
+
+<div class="col-md-3" id="checkout_date_container">
+    <label class="form-label d-block">Checkout Date</label>
+    <input type="date" class="form-control input datepicker hasDatepicker" name="checkout_date" style="background-color: white;font-size: 15px;line-height: 28px;padding: 17px 49px 17px 20px;color: #055fa0;"
+                                                   required>
+</div>
+                                        <!-- Booster Seats -->
+<div class="col-md-3">
+    <label class="form-label d-block">Booster Seats</label>
+    <input type="number" class="form-control" name="booster_seats" min="0" placeholder="e.g. 1" style="background-color: white;font-size: 15px;line-height: 28px;padding: 17px 49px 17px 20px;color: #055fa0;" style="background-color: white;">
+</div>
+
+<!-- Flight Number -->
+<div class="col-md-3">
+    <label class="form-label d-block">Flight Number</label>
+    <input type="text" class="form-control"  name="flight_number" placeholder="Flight No (if applicable)" style="background-color: white; font-size: 15px; line-height: 28px; padding: 17px 49px 17px 20px; color: #055fa0;">
+</div>
+   <div class="col-md-6">
+    <label class="form-label d-block">Phone Number</label>
+    <div class="input-group">
+        <span class="input-group-text p-0" style="border-radius: 0.375rem 0 0 0.375rem;">
+            <select class="form-select border-0" id="countryCode" name="country_code" required style="min-width: 10px; background-color: white;">
+                <option value="" disabled selected>Select Country Code</option>
+                                                <!-- Europe -->
+                                                <option value="+44">+44 (United Kingdom)</option>
+                                                <option value="+33">+33 (France)</option>
+                                                <option value="+49">+49 (Germany)</option>
+                                                <option value="+39">+39 (Italy)</option>
+                                                <option value="+34">+34 (Spain)</option>
+                                                <option value="+31">+31 (Netherlands)</option>
+                                                <option value="+41">+41 (Switzerland)</option>
+                                                <option value="+358">+358 (Finland)</option>
+                                                <option value="+47">+47 (Norway)</option>
+                                                <option value="+46">+46 (Sweden)</option>
+                                                <option value="+43">+43 (Austria)</option>
+                                                <option value="+32">+32 (Belgium)</option>
+                                                <option value="+351">+351 (Portugal)</option>
+                                                <option value="+420">+420 (Czech Republic)</option>
+                                                <option value="+48">+48 (Poland)</option>
+                                                <option value="+36">+36 (Hungary)</option>
+                                                <option value="+30">+30 (Greece)</option>
+                                                <option value="+353">+353 (Ireland)</option>
+                                                <option value="+372">+372 (Estonia)</option>
+                                                <option value="+371">+371 (Latvia)</option>
+                                                <option value="+370">+370 (Lithuania)</option>
+                                                <option value="+386">+386 (Slovenia)</option>
+                                                <option value="+385">+385 (Croatia)</option>
+                                                <option value="+381">+381 (Serbia)</option>
+                                                <option value="+380">+380 (Ukraine)</option>
+                                                <option value="+375">+375 (Belarus)</option>
+                                                <option value="+377">+377 (Monaco)</option>
+                                                <option value="+378">+378 (San Marino)</option>
+                                                <option value="+357">+357 (Cyprus)</option>
+                                                <option value="+423">+423 (Liechtenstein)</option>
+                                                <!-- North America -->
+                                                <option value="+1">+1 (USA/Canada)</option>
+                                                <option value="+52">+52 (Mexico)</option>
+                                                <!-- Asia -->
+                                                <option value="+81">+81 (Japan)</option>
+                                                <option value="+82">+82 (South Korea)</option>
+                                                <option value="+86">+86 (China)</option>
+                                                <option value="+91">+91 (India)</option>
+                                                <option value="+92">+92 (Pakistan)</option>
+                                                <option value="+880">+880 (Bangladesh)</option>
+                                                <option value="+94">+94 (Sri Lanka)</option>
+                                                <option value="+60">+60 (Malaysia)</option>
+                                                <option value="+63">+63 (Philippines)</option>
+                                                <option value="+62">+62 (Indonesia)</option>
+                                                <option value="+65">+65 (Singapore)</option>
+                                                <option value="+66">+66 (Thailand)</option>
+                                                <option value="+971">+971 (UAE)</option>
+                                                <option value="+966">+966 (Saudi Arabia)</option>
+                                                <option value="+7">+7 (Russia)</option>
+                                                <option value="+852">+852 (Hong Kong)</option>
+                                                <!-- Africa -->
+                                                <option value="+20">+20 (Egypt)</option>
+                                                <option value="+234">+234 (Nigeria)</option>
+                                                <option value="+254">+254 (Kenya)</option>
+                                                <option value="+27">+27 (South Africa)</option>
+                                                <option value="+212">+212 (Morocco)</option>
+                                                <option value="+213">+213 (Algeria)</option>
+                                                <option value="+216">+216 (Tunisia)</option>
+                                                <!-- Oceania -->
+                                                <option value="+61">+61 (Australia)</option>
+                                                <option value="+64">+64 (New Zealand)</option>
+            </select>
+        </span>
+        <input type="tel" class="form-control" id="phone" name="phone" placeholder="Enter phone number" required>
+    </div>
+</div>
+
+
+
+
+<!--                                        <div class="col-md-2">-->
+<!--                                            <label class="form-label d-block">Country Code</label>-->
+<!--                                            <select class="form-control" name="country_code" required>-->
+<!--                                                <option value="" disabled selected>Select Country Code</option>-->
+<!--                                                &lt;!&ndash; Europe &ndash;&gt;-->
+<!--                                                <option value="+44">+44 (United Kingdom)</option>-->
+<!--                                                <option value="+33">+33 (France)</option>-->
+<!--                                                <option value="+49">+49 (Germany)</option>-->
+<!--                                                <option value="+39">+39 (Italy)</option>-->
+<!--                                                <option value="+34">+34 (Spain)</option>-->
+<!--                                                <option value="+31">+31 (Netherlands)</option>-->
+<!--                                                <option value="+41">+41 (Switzerland)</option>-->
+<!--                                                <option value="+358">+358 (Finland)</option>-->
+<!--                                                <option value="+47">+47 (Norway)</option>-->
+<!--                                                <option value="+46">+46 (Sweden)</option>-->
+<!--                                                <option value="+43">+43 (Austria)</option>-->
+<!--                                                <option value="+32">+32 (Belgium)</option>-->
+<!--                                                <option value="+351">+351 (Portugal)</option>-->
+<!--                                                <option value="+420">+420 (Czech Republic)</option>-->
+<!--                                                <option value="+48">+48 (Poland)</option>-->
+<!--                                                <option value="+36">+36 (Hungary)</option>-->
+<!--                                                <option value="+30">+30 (Greece)</option>-->
+<!--                                                <option value="+353">+353 (Ireland)</option>-->
+<!--                                                <option value="+372">+372 (Estonia)</option>-->
+<!--                                                <option value="+371">+371 (Latvia)</option>-->
+<!--                                                <option value="+370">+370 (Lithuania)</option>-->
+<!--                                                <option value="+386">+386 (Slovenia)</option>-->
+<!--                                                <option value="+385">+385 (Croatia)</option>-->
+<!--                                                <option value="+381">+381 (Serbia)</option>-->
+<!--                                                <option value="+380">+380 (Ukraine)</option>-->
+<!--                                                <option value="+375">+375 (Belarus)</option>-->
+<!--                                                <option value="+377">+377 (Monaco)</option>-->
+<!--                                                <option value="+378">+378 (San Marino)</option>-->
+<!--                                                <option value="+357">+357 (Cyprus)</option>-->
+<!--                                                <option value="+423">+423 (Liechtenstein)</option>-->
+<!--                                                &lt;!&ndash; North America &ndash;&gt;-->
+<!--                                                <option value="+1">+1 (USA/Canada)</option>-->
+<!--                                                <option value="+52">+52 (Mexico)</option>-->
+<!--                                                &lt;!&ndash; Asia &ndash;&gt;-->
+<!--                                                <option value="+81">+81 (Japan)</option>-->
+<!--                                                <option value="+82">+82 (South Korea)</option>-->
+<!--                                                <option value="+86">+86 (China)</option>-->
+<!--                                                <option value="+91">+91 (India)</option>-->
+<!--                                                <option value="+92">+92 (Pakistan)</option>-->
+<!--                                                <option value="+880">+880 (Bangladesh)</option>-->
+<!--                                                <option value="+94">+94 (Sri Lanka)</option>-->
+<!--                                                <option value="+60">+60 (Malaysia)</option>-->
+<!--                                                <option value="+63">+63 (Philippines)</option>-->
+<!--                                                <option value="+62">+62 (Indonesia)</option>-->
+<!--                                                <option value="+65">+65 (Singapore)</option>-->
+<!--                                                <option value="+66">+66 (Thailand)</option>-->
+<!--                                                <option value="+971">+971 (UAE)</option>-->
+<!--                                                <option value="+966">+966 (Saudi Arabia)</option>-->
+<!--                                                <option value="+7">+7 (Russia)</option>-->
+<!--                                                <option value="+852">+852 (Hong Kong)</option>-->
+<!--                                                &lt;!&ndash; Africa &ndash;&gt;-->
+<!--                                                <option value="+20">+20 (Egypt)</option>-->
+<!--                                                <option value="+234">+234 (Nigeria)</option>-->
+<!--                                                <option value="+254">+254 (Kenya)</option>-->
+<!--                                                <option value="+27">+27 (South Africa)</option>-->
+<!--                                                <option value="+212">+212 (Morocco)</option>-->
+<!--                                                <option value="+213">+213 (Algeria)</option>-->
+<!--                                                <option value="+216">+216 (Tunisia)</option>-->
+<!--                                                &lt;!&ndash; Oceania &ndash;&gt;-->
+<!--                                                <option value="+61">+61 (Australia)</option>-->
+<!--                                                <option value="+64">+64 (New Zealand)</option>-->
+<!--                                            </select>-->
+
+<!--                                        </div>-->
+<!--                                        <div class="col-md-4">-->
+<!--                                            <label class="form-label d-block">Phone</label>-->
+<!--                                            <input type="tel" class="form-control" name="phone" placeholder="Phone"-->
+<!--                                                   required>-->
+<!--                                        </div>-->
+                                        <div class="col-md-6">
+                                            <div class="input1_wrapper">
+                                                <label class="form-label d-block">Promo Code</label>
+                                                <input type="text" class="form-control" style="background-color: white;font-size: 15px;line-height: 28px;padding: 17px 49px 17px 20px;color: #055fa0;" name="promo_code"
+                                                       placeholder="Enter Promo Code (optional)">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <label class="form-label d-block">Notes</label>
+                                            <textarea class="form-control" name="notes"
+                                                      placeholder="Additional Notes"></textarea>
+                                        </div>
+                                        <div class="col-md-6 text-right">
+                                            <button type="button" class="btn-form1-submit prev-btn">Previous</button>
+                                        </div>
+                                        <div class="col-md-6 text-right">
+                                            <button type="submit" class="btn-form1-submit">Submit</button>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Include necessary scripts -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        var currentStep = 0;
+        var steps = $(".form-step");
+        function showStep(index) {
+            steps.hide();
+            $(steps[index]).show();
+        }
+
+        $(".next-btn").click(function() {
+            if (currentStep < steps.length - 1) {
+                currentStep++;
+                showStep(currentStep);
+            }
+        });
+
+        $(".prev-btn").click(function() {
+            if (currentStep > 0) {
+                currentStep--;
+                showStep(currentStep);
+            }
+        });
+
+        // Initialize the form by showing the first step
+        showStep(currentStep);
+    });
+
+
+
+
+
+
+
+
+</script>
+<script>
+    $(document).ready(function() {
+        $('#return_time_container').hide(); // Hide return time field initially
+
+        $('#trip_type').change(function() {
+            var tripType = $(this).val();
+            if (tripType === 'Round Trip') { // Match the readable value exactly
+                $('#return_time_container').show();
+                $('#return_time').prop('required', true);
+            } else {
+                $('#return_time_container').hide();
+                $('#return_time').prop('required', false);
+                $('#return_time').val('0'); // Set to default (you may adjust if you want text like 'N/A')
+            }
+        });
+
+        $('#bookingForm').on('submit', function(event) {
+            if ($('#trip_type').val() !== 'Round Trip') {
+                $('#return_time').val('0');
+            }
+        });
+    });
+
+</script>
+<script>
+    $(document).ready(function () {
+        // Initially hide return time and checkout date
+        $('#return_time_container').hide();
+        $('#checkout_date_container').hide();
+
+        // Handle trip type changes
+        $('select[name="trip_type"]').on('change', function () {
+            const tripType = $(this).val();
+
+            if (tripType === 'Round Trip') {
+                // Round Trip selected
+                $('#return_time_container').show();
+                $('#checkout_date_container').show();
+                $('select[name="return_time"]').prop('required', true);
+                $('input[name="checkout_date"]').prop('required', true);
+            } else {
+                // One Way selected
+                $('#return_time_container').hide();
+                $('#checkout_date_container').hide();
+                $('select[name="return_time"]').prop('required', false).val('0');
+                $('input[name="checkout_date"]').prop('required', false).val('');
+            }
+        });
+
+        // Trigger change on page load to apply logic if pre-filled
+        $('select[name="trip_type"]').trigger('change');
+    });
+
+</script>
+
+
+<script src="https://maps.googleapis.com/maps/api/js?key={{ google_api_key }}&libraries=places"></script>
+<script>
+    function initAutocomplete() {
+        const pickupInput = document.getElementById('id_pickup_address');
+        const dropoffInput = document.getElementById('id_dropoff_address');
+        const pickupAutocomplete = new google.maps.places.Autocomplete(pickupInput);
+        const dropoffAutocomplete = new google.maps.places.Autocomplete(dropoffInput);
+
+        pickupAutocomplete.addListener('place_changed', function () {
+            const place = pickupAutocomplete.getPlace();
+            document.getElementById('id_pickup_latitude').value = place.geometry.location.lat();
+            document.getElementById('id_pickup_longitude').value = place.geometry.location.lng();
+        });
+
+        dropoffAutocomplete.addListener('place_changed', function () {
+            const place = dropoffAutocomplete.getPlace();
+            document.getElementById('id_dropoff_latitude').value = place.geometry.location.lat();
+            document.getElementById('id_dropoff_longitude').value = place.geometry.location.lng();
+        });
+    }
+    google.maps.event.addDomListener(window, 'load', initAutocomplete);
+</script>
+
+<style>
+    .common_style {
+        background-color: white;
+        font-size: 15px;
+        line-height: 28px;
+        padding: 17px 49px 17px 20px;
+        color: #055fa0;
+    }
+</style>
+
+
+{% endblock %}

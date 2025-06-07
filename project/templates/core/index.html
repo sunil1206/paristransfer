@@ -1,0 +1,40 @@
+{% extends 'core/base.html' %}
+{% load static %}
+<title>{% block title %}{{ seo_settings.title|default:"Paris Magical Transfer" }}{% endblock %}</title>
+
+{% block meta_description %}
+    <meta name="description" content="{{ seo_settings.meta_description|default:'' }}">
+{% endblock %}
+
+{% block meta_keywords %}
+    {% if seo_settings.meta_keywords %}
+        <meta name="keywords" content="{{ seo_settings.meta_keywords }}">
+    {% endif %}
+{% endblock %}
+
+{% block canonical_url %}
+    {% if canonical_url %}
+        <link rel="canonical" href="{{ canonical_url }}">
+    {% endif %}
+{% endblock %}
+
+{% block og_meta %}
+    <meta property="og:title" content="{{ seo_settings.title|default:'' }}">
+    <meta property="og:description" content="{{ seo_settings.meta_description|default:'' }}">
+    <meta property="og:url" content="{{ canonical_url|default:'' }}">
+    {% if seo_settings.og_image %}
+        <meta property="og:image" content="{{ seo_settings.og_image }}">
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+{% include 'core/nav.html' %}
+{% include 'core/slider.html' %}
+{% include 'core/booking.html' %}
+{% include 'core/about.html' %}
+{% include 'core/cab.html' %}
+{% include 'core/service.html' %}
+{% include 'blog/blog.html' %}
+{% include 'core/faq.html' %}
+{% include 'core/footer.html' %}
+{% endblock %}

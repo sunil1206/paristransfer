@@ -1,0 +1,78 @@
+<!--<section class="blog section-padding bg-blck">-->
+<!--    <div class="container">-->
+<!--        <div class="row">-->
+<!--            <div class="col-md-12 text-center">-->
+<!--                <div class="section-subtitle"><span>Blog</span></div>-->
+<!--                <div class="section-title"><span>Our Blog</span></div>-->
+<!--            </div>-->
+<!--        </div>-->
+
+<!--        <div class="row">-->
+<!--            <div class="col-md-12">-->
+
+<!--                <div class="owl-carousel owl-theme">-->
+<!--                    {% for blog in blogs %}-->
+<!--                     <li>-->
+<!--                <h2>{{ blog.title }}</h2>-->
+<!--                <p>Published on: {{ blog.date }}</p>-->
+<!--                <p>{{ blog.content|truncatewords:50 }}...</p>-->
+<!--                <a href="/blog/{{ blog.id }}/">Read More</a>-->
+<!--            </li>-->
+<!--                    <div class="item">-->
+<!--                        <div class="position-re o-hidden">-->
+<!--                            <img src="{{ blog.image.url }}" alt="{{ blog.title }}">-->
+<!--                            <div class="date">-->
+<!--                                <a href="{{ blog.get_absolute_url }}">-->
+<!--                                    <span>{{ blog.date|date:"M" }}</span>-->
+<!--                                    <i>{{ blog.date|date:"d" }}</i>-->
+<!--                                </a>-->
+<!--                            </div>-->
+<!--                        </div>-->
+<!--                        <div class="con">-->
+<!--                                <span class="category">-->
+<!--                                    <a href="{% url 'index' %}?category={{ blog.category }}">{{ blog.category }}</a>-->
+<!--                                </span>-->
+<!--                            <h5>-->
+<!--                                <a href="{{ blog.get_absolute_url }}">{{ blog.title }}</a>-->
+<!--                            </h5>-->
+<!--                        </div>-->
+<!--                    </div>-->
+<!--                    {% endfor %}-->
+<!--                </div>-->
+
+<!--            </div>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</section>-->
+
+<!-- News -->
+    <section class="news section-padding bg-blck">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="section-subtitle"><span>Hotel Blog</span></div>
+                    <div class="section-title"><span>Our News</span></div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="owl-carousel owl-theme">
+                        {% for blog in blogs %}
+                        <div class="item">
+                            <div class="position-re o-hidden"> <img src="{{ blog.image.url }}" alt="{{ blog.title }}">
+                                <div class="date">
+                                    <a href="{{ blog.get_absolute_url }}"> <span>{{ blog.date|date:"M" }}</span> <i>{{ blog.date|date:"D" }}</i> </a>
+                                </div>
+                            </div>
+                            <div class="con"> <span class="category">
+                                    <a href="news.html">{{ blog.category }}</a>
+                                </span>
+                                <h5><a href="{{ blog.get_absolute_url }}">{{ blog.title }}</a></h5>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>

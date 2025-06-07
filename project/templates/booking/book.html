@@ -1,0 +1,8 @@
+<form method="POST">
+    {% csrf_token %}
+    <input name="first_name" required>
+    <input name="last_name" required>
+    <input name="email" type="email" required>
+    <input name="phone" required>
+    <button type="submit">Confirm Booking</button>
+</form>
