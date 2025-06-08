@@ -17,8 +17,8 @@
                             <h6>Check Price</h6>
                             <h4>Predict Price </h4>
                             {% if predicted_price %}
-                            <div class="result">
-                                <h3 style="color:black;">Predicted Price: EUR {{ predicted_price }}</h3>
+                            <div class="result" id="result">
+                                <h3 style="color:black;">Predicted Price: € {{ predicted_price }}</h3>
                                 <!--        <h5 style="color:black;">Booking Confirmation</h5>-->
 <!--                                <p style="color:black;">Your booking has been confirmed, and the price has been set at $-->
 <!--                                    {{ booking.price }}.</p>-->
@@ -79,6 +79,15 @@
                                             <option value="" disabled selected>Number of Adults</option>
                                             <option value="1">1</option>
                                             <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                            <option value="5">5</option>
+                                            <option value="6">6</option>
+                                            <option value="7">7</option>
+                                            <option value="8">8</option>
+                                            <option value="9">9</option>
+                                            <option value="10">10</option>
+
                                         </select>
                                         <!--                <input type="number" class="select2 select form-control" name="adults" placeholder="Adults" max="8" required>-->
 
@@ -91,6 +100,10 @@
                                             <option value="" disabled selected>Number of Children</option>
                                             <option value="1">1</option>
                                             <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                            <option value="5">5</option>
+                                            <option value="6">6</option>
                                         </select>
                                     </div>
                                     <div class="col-md-6">
@@ -294,6 +307,14 @@
 
 </script>
 
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const result = document.getElementById("result");
+        if (result) {
+            result.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+    });
+</script>
 
 
 {% endblock %}
