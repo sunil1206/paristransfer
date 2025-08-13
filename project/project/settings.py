@@ -25,8 +25,8 @@ SECRET_KEY = 'django-insecure-huo7-ub*11nr@satj^vifj+58_7*3+g#fm%r+$f3$bxp14-n^j
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-#ALLOWED_HOSTS = ['parismagiclandtransfer.com','www.parismagiclandtransfer.com','188.166.151.139']
+# ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['parismagiclandtransfer.com','www.parismagiclandtransfer.com','188.166.151.139']
 
 SITE_ID = 1
 

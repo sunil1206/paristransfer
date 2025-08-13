@@ -134,7 +134,7 @@ def booking_view(request):
 
                 send_user_confirmation_email(booking)
                 send_admin_emails(booking)
-                return render(request, "core/index.html", {"booking": booking})
+                return render(request, "booking/booking_success.html", {"booking": booking})
             else:
                 messages.error(request, "Please fix the errors in the form.")
                 logger.warning(f"Form errors: {form.errors}")
