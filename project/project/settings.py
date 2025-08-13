@@ -44,6 +44,8 @@ INSTALLED_APPS = [
     'seo',
     'booking',
     'contact',
+    'book',
+"import_export",
 
 
 
@@ -91,27 +93,27 @@ WSGI_APPLICATION = 'project.wsgi.application'
 #     }
 #  }
 #
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'paristransfer',
-#         'USER': 'postgres',
-#         'PASSWORD': 'Linus@12',
-#         'HOST': 'localhost',
-#         'PORT': '5432',
-#     }
-# }
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'paristransfer',
-        'USER': 'paristransfer',
-        'PASSWORD': 'paristransfer@2025',
+        'USER': 'postgres',
+        'PASSWORD': 'Linus@12',
         'HOST': 'localhost',
         'PORT': '5432',
     }
 }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'paristransfer',
+#         'USER': 'paristransfer',
+#         'PASSWORD': 'paristransfer@2025',
+#         'HOST': 'localhost',
+#         'PORT': '5432',
+#     }
+# }
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 

@@ -256,110 +256,110 @@ def apply_promo_code(promo_code, price):
         pass
     return price
 
-def send_user_confirmation_email(booking, predicted_price):
-    subject = "Booking Confirmation – Your Ride is Booked!"
-    plain_message = f"Dear {booking.first_name}, your booking is confirmed. Fare: EUR {predicted_price}."
-    from_email = settings.DEFAULT_FROM_EMAIL
-    recipient_list = [booking.email]
-    html_message = f"""
-    <html>
-      <body style="font-family: Arial; background-color: #f4f4f4; padding: 20px;">
-        <div style="max-width: 600px; background: white; padding: 30px; border-radius: 10px;">
-          <h2 style="color: #4CAF50;">🚖 Booking Confirmed</h2>
-          <p>Hello <strong>{booking.first_name}</strong>,</p>
-          <p>Your taxi has been booked successfully.</p>
-          <p><strong>Fare:</strong> EUR {predicted_price}</p>
-          <p><strong>Pickup:</strong> {booking.pickup_location}</p>
-          <p><strong>Dropoff:</strong> {booking.dropoff_location}</p>
-          <p>Thank you!</p>
-        </div>
-      </body>
-    </html>
-    """
-    send_mail(subject, plain_message, from_email, recipient_list, html_message=html_message, fail_silently=False)
-
-def send_admin_emails(booking, predicted_price, promo_code):
-    from_email = settings.DEFAULT_FROM_EMAIL
-    subject = "🚨 New Booking Received"
-    html_message = f"""
-    <html>
-      <body>
-        <h2>New Booking Alert!</h2>
-        <p><strong>Name:</strong> {booking.first_name} {booking.last_name}</p>
-        <p><strong>Email:</strong> {booking.email}</p>
-        <p><strong>Phone:</strong> {booking.phone}</p>
-        <p><strong>Pickup:</strong> {booking.pickup_location}</p>
-        <p><strong>Dropoff:</strong> {booking.dropoff_location}</p>
-        <p><strong>Pickup Address:</strong> {booking.pickup_address}</p>
-        <p><strong>Dropoff Address:</strong> {booking.dropoff_address}</p>
-        <p><strong>Trip Type:</strong> {booking.trip_type}</p>
-        <p><strong>Transport:</strong> {booking.transport_type}</p>
-        <p><strong>Adults:</strong> {booking.adults}, <strong>Children:</strong> {booking.children}</p>
-        <p><strong>Luggage:</strong> {booking.luggage}</p>
-        <p><strong>Fare:</strong> EUR {predicted_price} (Final: EUR {booking.price})</p>
-        <p><strong>Promo:</strong> {promo_code or "No"}</p>
-        <p><strong>Time:</strong> {booking.created_at}</p>
-      </body>
-    </html>
-    """
-    email = EmailMultiAlternatives(subject, "Booking info", from_email, ['linusfit12@gmail.com'])
-    email.attach_alternative(html_message, "text/html")
-    email.send(fail_silently=False)
-
-# -------------------------------
-# Main View
-# -------------------------------
-from django.utils import timezone
-import logging
-
-logger = logging.getLogger(__name__)
-
-def predict_price_and_book(request):
-    predicted_price = None
-    booking_form = BookingForm(request.POST or None)
-
-    if request.method == "POST":
-        try:
-            # Prepare ML input features
-            features = prepare_features(request)
-            predicted_price = predict_price(features)
-
-            if booking_form.is_valid():
-                booking = booking_form.save(commit=False)
-                booking.price = predicted_price
-                booking.created_at = timezone.now()
-
-                # Handle promo code manually from promo_code_input
-                promo_code_input = booking_form.cleaned_data.get("promo_code_input")
-                if promo_code_input:
-                    from .models import PromoCode
-                    promo = PromoCode.objects.filter(code__iexact=promo_code_input, active=True).first()
-                    if promo and promo.valid_from <= timezone.now() <= promo.valid_until:
-                        booking.price = round(booking.price * (1 - promo.discount_percentage / 100), 2)
-                        booking.promo_code = promo
-
-                booking.save()
-
-                # Send confirmation emails
-                send_user_confirmation_email(booking, predicted_price)
-                send_admin_emails(booking, predicted_price, booking.promo_code)
-
-                return render(request, "url/booking.html", {
-                    "booking": booking,
-                    "predicted_price": predicted_price
-                })
-
-            else:
-                # Print form errors to console or logs
-                print("FORM ERRORS:", booking_form.errors)
-                messages.error(request, "Please fix the errors in the form.")
-
-        except Exception as e:
-            logger.error(f"Error during booking: {e}", exc_info=True)
-            messages.error(request, "Something went wrong while processing your booking.")
-
-    return render(request, "url/bookingpage.html", {
-        "form": booking_form,
-        "predicted_price": predicted_price,
-        "google_api_key": settings.GOOGLE_MAPS_API_KEY,
-    })
+# def send_user_confirmation_email(booking, predicted_price):
+#     subject = "Booking Confirmation – Your Ride is Booked!"
+#     plain_message = f"Dear {booking.first_name}, your booking is confirmed. Fare: EUR {predicted_price}."
+#     from_email = settings.DEFAULT_FROM_EMAIL
+#     recipient_list = [booking.email]
+#     html_message = f"""
+#     <html>
+#       <body style="font-family: Arial; background-color: #f4f4f4; padding: 20px;">
+#         <div style="max-width: 600px; background: white; padding: 30px; border-radius: 10px;">
+#           <h2 style="color: #4CAF50;">🚖 Booking Confirmed</h2>
+#           <p>Hello <strong>{booking.first_name}</strong>,</p>
+#           <p>Your taxi has been booked successfully.</p>
+#           <p><strong>Fare:</strong> EUR {predicted_price}</p>
+#           <p><strong>Pickup:</strong> {booking.pickup_location}</p>
+#           <p><strong>Dropoff:</strong> {booking.dropoff_location}</p>
+#           <p>Thank you!</p>
+#         </div>
+#       </body>
+#     </html>
+#     """
+#     send_mail(subject, plain_message, from_email, recipient_list, html_message=html_message, fail_silently=False)
+#
+# def send_admin_emails(booking, predicted_price, promo_code):
+#     from_email = settings.DEFAULT_FROM_EMAIL
+#     subject = "🚨 New Booking Received"
+#     html_message = f"""
+#     <html>
+#       <body>
+#         <h2>New Booking Alert!</h2>
+#         <p><strong>Name:</strong> {booking.first_name} {booking.last_name}</p>
+#         <p><strong>Email:</strong> {booking.email}</p>
+#         <p><strong>Phone:</strong> {booking.phone}</p>
+#         <p><strong>Pickup:</strong> {booking.pickup_location}</p>
+#         <p><strong>Dropoff:</strong> {booking.dropoff_location}</p>
+#         <p><strong>Pickup Address:</strong> {booking.pickup_address}</p>
+#         <p><strong>Dropoff Address:</strong> {booking.dropoff_address}</p>
+#         <p><strong>Trip Type:</strong> {booking.trip_type}</p>
+#         <p><strong>Transport:</strong> {booking.transport_type}</p>
+#         <p><strong>Adults:</strong> {booking.adults}, <strong>Children:</strong> {booking.children}</p>
+#         <p><strong>Luggage:</strong> {booking.luggage}</p>
+#         <p><strong>Fare:</strong> EUR {predicted_price} (Final: EUR {booking.price})</p>
+#         <p><strong>Promo:</strong> {promo_code or "No"}</p>
+#         <p><strong>Time:</strong> {booking.created_at}</p>
+#       </body>
+#     </html>
+#     """
+#     email = EmailMultiAlternatives(subject, "Booking info", from_email, ['linusfit12@gmail.com'])
+#     email.attach_alternative(html_message, "text/html")
+#     email.send(fail_silently=False)
+#
+# # -------------------------------
+# # Main View
+# # -------------------------------
+# from django.utils import timezone
+# import logging
+#
+# logger = logging.getLogger(__name__)
+#
+# def predict_price_and_book(request):
+#     predicted_price = None
+#     booking_form = BookingForm(request.POST or None)
+#
+#     if request.method == "POST":
+#         try:
+#             # Prepare ML input features
+#             features = prepare_features(request)
+#             predicted_price = predict_price(features)
+#
+#             if booking_form.is_valid():
+#                 booking = booking_form.save(commit=False)
+#                 booking.price = predicted_price
+#                 booking.created_at = timezone.now()
+#
+#                 # Handle promo code manually from promo_code_input
+#                 promo_code_input = booking_form.cleaned_data.get("promo_code_input")
+#                 if promo_code_input:
+#                     from .models import PromoCode
+#                     promo = PromoCode.objects.filter(code__iexact=promo_code_input, active=True).first()
+#                     if promo and promo.valid_from <= timezone.now() <= promo.valid_until:
+#                         booking.price = round(booking.price * (1 - promo.discount_percentage / 100), 2)
+#                         booking.promo_code = promo
+#
+#                 booking.save()
+#
+#                 # Send confirmation emails
+#                 send_user_confirmation_email(booking, predicted_price)
+#                 send_admin_emails(booking, predicted_price, booking.promo_code)
+#
+#                 return render(request, "url/booking.html", {
+#                     "booking": booking,
+#                     "predicted_price": predicted_price
+#                 })
+#
+#             else:
+#                 # Print form errors to console or logs
+#                 print("FORM ERRORS:", booking_form.errors)
+#                 messages.error(request, "Please fix the errors in the form.")
+#
+#         except Exception as e:
+#             logger.error(f"Error during booking: {e}", exc_info=True)
+#             messages.error(request, "Something went wrong while processing your booking.")
+#
+#     return render(request, "url/bookingpage.html", {
+#         "form": booking_form,
+#         "predicted_price": predicted_price,
+#         "google_api_key": settings.GOOGLE_MAPS_API_KEY,
+#     })

@@ -2,15 +2,7 @@ from django.utils import timezone
 from django.db import models
 from django.core.exceptions import ValidationError
 
-class PromoCode(models.Model):
-    code = models.CharField(max_length=50, unique=True)
-    discount_percentage = models.DecimalField(max_digits=5, decimal_places=2)
-    valid_from = models.DateTimeField()
-    valid_until = models.DateTimeField()
-    active = models.BooleanField(default=True)
-    def __str__(self):
-        return self.code
-#
+
 # class Booking(models.Model):
 #     trip_type = models.CharField(max_length=20)
 #     pickup_location = models.CharField(max_length=50)
@@ -75,19 +67,17 @@ class Booking(models.Model):
     trip_type = models.CharField(max_length=20, choices=TRIP_TYPE_CHOICES,default="One Way")
     pickup_location = models.CharField(max_length=50, choices=LOCATION_CHOICES)
     dropoff_location = models.CharField(max_length=50, choices=LOCATION_CHOICES)
-
     pickup_address = models.CharField(max_length=255, blank=True, null=True)
     dropoff_address = models.CharField(max_length=255, blank=True, null=True)
     pickup_latitude = models.FloatField(blank=True, null=True)
     pickup_longitude = models.FloatField(blank=True, null=True)
     dropoff_latitude = models.FloatField(blank=True, null=True)
     dropoff_longitude = models.FloatField(blank=True, null=True)
-
     transport_type = models.CharField(max_length=20, choices=TRANSPORT_TYPE_CHOICES, default="Car")
     adults = models.IntegerField()
     children = models.IntegerField()
+    # passengers = models.IntegerField()
     luggage = models.IntegerField()
-
     pickup_time = models.CharField(max_length=5, blank=True)
     return_time = models.CharField(max_length=5, blank=True)
     checkout_date = models.DateField(blank=True, null=True)
@@ -101,13 +91,10 @@ class Booking(models.Model):
     email = models.EmailField()
     country_code = models.CharField(max_length=5)
     phone = models.CharField(max_length=15)
-
     promo_code = models.ForeignKey(PromoCode, on_delete=models.SET_NULL, null=True, blank=True)
     notes = models.TextField(blank=True)
-
     price = models.DecimalField(max_digits=10, decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)
-
     def __str__(self):
         return f"{self.first_name} {self.last_name} - {self.trip_type}"
 

@@ -1,67 +1,252 @@
 {% load static %}
-<!-- Navbar -->
-    <nav class="navbar navbar-expand-lg">
-        <div class="container">
-            <!-- Logo -->
-<!--            <div class="logo-wrapper">-->
-<!--                <a class="logo" href="{% url 'index' %}"> <img src="{% static 'img/logo.svg' %}" class="logo-img" alt="paris transfer"> </a>-->
-<!--                 <a class="logo" href="index.html"> <h2>THE PARIS <span>TRANSFER</span></h2> </a>-->
-<!--            </div>-->
-            <div class="site-header__branding">
-  <a class="site-header__logo" href="{% url 'index' %}">
-    <img
-      src="{% static 'img/logo4.png' %}"
-      alt="The Paris Transfer"
-      class="site-header__logo-img"
-    >
-  </a>
-  <h1 class="site-header__title">
-<!--    THE PARIS <span class="site-header__highlight">TRANSFER</span>-->
-  </h1>
-</div>
-            <!-- Button -->
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"><i class="ti-menu"></i></span> </button>
-            <!-- Menu -->
-            <div class="collapse navbar-collapse" id="navbar">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item dropdown"> <a class="nav-link" href="{% url 'index' %}" role="button" >Home <i class="ti-angle-down"></i></a>
+<!-- Disclaimer: This pen is just a fun project based on a fictional character for freeCodeCamp and not in any form associated with the movie Her and Warner Bros. -->
+<header id="header" class="menu-container">
+  <!-- Logo -->
+  <div class="logo-box">
+    <a href="{% url 'index' %}">
+      <img src="{% static 'img/logo4.png' %}" class="logo-img" alt="Paris Transfer">
+    </a>
+  </div>
+  <!-- /Logo -->
 
-                    </li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'about' %}">About</a></li>
-<!--                    <li class="nav-item"><a class="nav-link" href="{% url 'service' %}">Service</a></li>-->
-                    <li class="nav-item"><a class="nav-link" href="{% url 'booking' %}">Booking</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{% url 'contact' %}">Contact</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-
+  <!-- Navbar -->
+  <nav id="nav-bar">
+    <input class="menu-btn" type="checkbox" id="menu-btn" />
+    <label class="menu-icon" for="menu-btn"><span class="nav-icon"></span></label>
+    <ul class="menu">
+      <li><a href="{% url 'index' %}" class="nav-link">Home</a></li>
+      <li><a href="{% url 'about' %}" class="nav-link">About</a></li>
+      <li><a href="{% url 'booking' %}" class="nav-link">Booking</a></li>
+      <li><a href="{% url 'contact' %}" class="nav-link">Contact</a></li>
+      <!-- <li><a class="highlight" href="#">Getting Started</a></li> -->
+    </ul>
+  </nav>
+  <!-- /Navbar -->
+</header>
 
 <style>
-    .site-header__branding {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
+
+
+#header {
+  background: white;
+  box-shadow: 1px 1px 4px 0 rgba(0,0,0,.1);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 3;
 }
 
-.site-header__logo {
+#header-img {
+  margin-left: 20px;
+  float: left;
+  height: 80px;
+}
+
+nav ul {
+  overflow: hidden;
+  clear: both;
+  margin: 0;
+  padding: 0;
+  max-height: 0;
+  transition: max-height .2s ease-out;
+}
+
+nav ul li {
+  list-style: none;
+}
+
+nav ul li a {
+  display: block;
+  font-size: 1.15;
+  text-decoration: none;
+  color: black;
+  padding: 10px;
+}
+
+a.highlight {
+    display: block;
+  font-size: 1.15;
+  text-decoration: none;
+  color: black;
+  padding: 10px;
+}
+
+
+
+#header .menu-icon {
+  cursor: pointer;
+  padding: 28px 20px;
+  user-select: none;
+  float: right;
+}
+
+#header .menu-icon .nav-icon {
+  background: #333;
+  display: block;
+  height: 3px;
+  position: relative;
+  top: 10px;
+  transition: background .2s ease-out;
+  width: 30px;
+}
+
+#header .menu-icon .nav-icon:before,
+#header .menu-icon .nav-icon:after {
+  background: #333;
+  content: '';
+  display: block;
+  height: 100%;
+  position: absolute;
+  transition: all .2s ease-out;
+  width: 100%;
+}
+
+#header .menu-icon .nav-icon:before {
+  top: 6px;
+}
+
+#header .menu-icon .nav-icon:after {
+  top: -6px;
+}
+
+/* menu btn */
+
+#header .menu-btn {
+  display: none;
+}
+
+#header .menu-btn:checked ~ .menu {
+  max-height: 240px;
+}
+
+#header .menu-btn:checked ~ .menu-icon .nav-icon {
+  background: transparent;
+}
+
+#header .menu-btn:checked ~ .menu-icon .nav-icon:before {
+  transform: rotate(-45deg);
+  top:0;
+}
+
+#header .menu-btn:checked ~ .menu-icon .nav-icon:after {
+  transform: rotate(45deg);
+  top:0;
+}
+.three-dots {
+  text-align: center;
+}
+
+.three-dots span {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  background: red;
   display: inline-block;
-  /* adjust padding/margins as needed */
+  margin: 30px 5px;
 }
 
-.site-header__logo-img {
-  width: 250px;   /* new logo width */
-  height: auto;
+
+li.features:before {
+  content: '✓';
+  padding-right: 5px;
 }
 
-.site-header__title {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.5rem;
-  text-transform: uppercase;
+li.features {
+  text-align: left;
+  padding: 10px;
 }
 
-.site-header__highlight {
-  color: #e63946; /* accent color for “TRANSFER” */
+li.first-feat {
+  margin-top: 30px;
 }
 
+
+  header {
+    display: flex;
+    justify-content: space-around;
+    flex-direction: row;
+    flex-flow: wrap;
+  }
+
+  #header {
+    background: white;
+  }
+
+  #header-img {
+    margin-left: -100px;
+  }
+
+  .menu {
+  margin-top: 20px;
+  }
+
+  nav {
+    margin-right: -100px;
+  }
+
+  nav ul {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: row;
+  }
+
+  nav ul li {
+    float: left;
+    list-style: none;
+    padding: 0.5em 1em;
+  }
+  nav ul li a {
+    font-size: 1em;
+    text-decoration: none;
+    color: #333;
+    padding: 0;
+  }
+
+  a.highlight {
+    font-size: 1em;
+    text-decoration: none;
+    color: #333;
+    padding: 0.5em 1em;
+  }
+
+  #header .menu {
+    clear: none;
+    float: right;
+    max-height: none;
+  }
+  #header .menu-icon {
+    display: none;
+  }
+
+  .highlight {
+    border: 1px solid #333;
+    border-radius: 50px;
+  }
+
+  .highlight:hover,.special:hover {
+    background: black;
+    color: white;
+    border-bottom: none;
+  }
+
+
+
+  .hero {
+    margin-top: 150px;
+    text-align: left;
+  }
+
+  .hero h1 {
+    font-size: 4em;
+    line-height: 55px;
+  }
+
+  .hero p {
+    font-size: 1.3em;
+    margin: 0.5em 0 1em 0;
+    padding: 0;
+  }
+}
 </style>

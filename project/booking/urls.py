@@ -7,5 +7,5 @@ from booking import views
 
 urlpatterns = [
     path('predict/', views.predict_price, name='predict_price'),
-    path('booking/', views.predict_price_and_book, name='booking'),
+    # path('booking/', views.predict_price_and_book, name='booking'),
 ]

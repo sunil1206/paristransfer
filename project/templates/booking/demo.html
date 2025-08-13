@@ -1,0 +1,651 @@
+{% extends 'core/base.html' %}
+
+{% load static %}
+{% block content %}
+
+
+<!-- Reservation & Booking Form -->
+<section class="testimonials">
+    <div class="background bg-img bg-fixed section-padding pb-0"
+         style=""
+         data-background="{% static 'img/slider/4.png' %}"
+         data-overlay-dark="0">
+        <div class="container">
+            <div class="row">
+                <!-- Reservation -->
+
+                <!-- Booking Form -->
+                <div class="col-md-12">
+                    <div class="booking-box">
+                        <div class="head-box">
+                            <h6>Cabs & Booking</h6>
+                            <h4> Booking Form</h4>
+                            {% if predicted_price %}
+                            <div class="result">
+                                <h3 style="color:black;">Predicted Price: € {{ predicted_price }}</h3>
+                                <h5 style="color:black;">Booking Confirmation</h5>
+                                <p style="color:black;">Thank you for booking with us, {{ booking.first_name }}!</p>
+                                <p style="color:black;">Your booking has been confirmed, and the price has been set at
+                                    € {{ booking.price }}.</p>
+                                <p style="color:black;">We have sent a confirmation email to {{ booking.email }}.</p>
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% if form.errors %}
+                        <div class="alert alert-danger">
+                            <strong>Form Errors:</strong>
+                            <ul>
+                                {% for field in form %}
+                                {% for error in field.errors %}
+                                <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+                                {% endfor %}
+                                {% endfor %}
+                                {% for error in form.non_field_errors %}
+                                <li>{{ error }}</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
+
+                        <div class="booking-inner clearfix">
+<form id="bookingForm" method="POST" action="" class="form1 clearfix" data-quote-url="{% url 'booking_quote' %}">
+  {% csrf_token %}
+
+  <!-- Step 1: Trip Details -->
+  <fieldset class="form-step">
+    <div class="row">
+      <!-- Estimated Price -->
+      <div class="col-md-3">
+        <label class="form-label d-block">Estimated Price</label>
+        <div id="priceDisplay" class="fw-bold" style="font-size:1.25rem;color:#055fa0;">€0</div>
+      </div>
+
+      <!-- Trip Type -->
+      <div class="col-md-3">
+        <label class="form-label d-block mb-2">Trip Type</label>
+        {% for radio in form.trip_type %}
+          <div class="form-check form-check-inline custom-radio">
+            {{ radio.tag }}
+            <label class="form-check-label" for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
+          </div>
+        {% endfor %}
+      </div>
+
+      <!-- Passengers -->
+      <div class="col-md-2">
+        <label class="form-label d-block">Passengers</label>
+        {{ form.passengers }}
+      </div>
+
+      <!-- Leg 1 -->
+      <div class="row" id="trip1">
+        <div class="col-md-3">
+          <label class="form-label d-block">Pickup Location</label>
+          {{ form.pickup_location_1 }}
+        </div>
+        <div class="col-md-3">
+          <label class="form-label d-block">Drop Off Location</label>
+          {{ form.dropoff_location_1 }}
+        </div>
+      </div>
+
+      <!-- Leg 2 (Round Trip only) -->
+      <div class="row" id="trip2" style="display:none;">
+        <div class="col-md-3">
+          <label class="form-label d-block">Return Pickup Location</label>
+          {{ form.pickup_location_2 }}
+        </div>
+        <div class="col-md-3">
+          <label class="form-label d-block">Return Drop Off Location</label>
+          {{ form.dropoff_location_2 }}
+        </div>
+      </div>
+
+      <!-- Transport Type -->
+      <div class="col-md-3">
+        <label class="form-label d-block mb-2">Transport Type</label>
+        {% for radio in form.transport_type %}
+          <div class="form-check">
+            {{ radio.tag }}
+            <label class="form-check-label d-flex align-items-center" for="{{ radio.id_for_label }}">
+              {% if radio.choice_label == "Car" %}
+                <img src="/static/img/car.png" alt="Car" width="40" class="me-2"> Car
+              {% elif radio.choice_label == "Van" %}
+                <img src="/static/img/van.png" alt="Van" width="40" class="me-2"> Van
+              {% else %}
+                {{ radio.choice_label }}
+              {% endif %}
+            </label>
+          </div>
+        {% endfor %}
+      </div>
+
+      <!-- Times -->
+      <div class="col-md-3">
+        <label class="form-label d-block">Pickup Time</label>
+        {{ form.pickup_time }}
+      </div>
+      <div class="col-md-3" id="return_time_container" style="display:none;">
+        <label class="form-label d-block">Return Time</label>
+        {{ form.return_time }}
+      </div>
+
+      <div class="col-md-12 text-right mt-3">
+        <button type="button" class="btn-form1-submit next-btn">Next</button>
+      </div>
+    </div>
+  </fieldset>
+
+  <!-- Step 2: Personal Details -->
+  <fieldset class="form-step" style="display:none;">
+    <div class="row">
+      <div class="col-md-6">
+        <label class="form-label d-block">Pickup Address (optional)</label>
+        {{ form.pickup_address }}
+      </div>
+      <div class="col-md-6">
+        <label class="form-label d-block">Dropoff Address (optional)</label>
+        {{ form.dropoff_address }}
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label d-block">Check-in Date</label>
+        {{ form.checkin_date }}
+      </div>
+      <div class="col-md-3">
+        <label class="form-label d-block">Checkout Date</label>
+        {{ form.checkout_date }}
+      </div>
+      <div class="col-md-3">
+        <label class="form-label d-block">Booster Seats</label>
+        {{ form.booster_seats }}
+      </div>
+      <div class="col-md-3">
+        <label class="form-label d-block">Flight Number</label>
+        {{ form.flight_number }}
+      </div>
+
+      <div class="col-md-4">
+        <label class="form-label d-block">Adults</label>
+        {{ form.adults }}
+      </div>
+      <div class="col-md-4">
+        <label class="form-label d-block">Children</label>
+        {{ form.children }}
+      </div>
+      <div class="col-md-4">
+        <label class="form-label d-block">Luggage</label>
+        {{ form.luggage }}
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label d-block">First Name</label>
+        {{ form.first_name }}
+      </div>
+      <div class="col-md-6">
+        <label class="form-label d-block">Last Name</label>
+        {{ form.last_name }}
+      </div>
+      <div class="col-md-6">
+        <label class="form-label d-block">Email</label>
+        {{ form.email }}
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label d-block">Phone Number</label>
+        <div class="input-group">
+          <span class="input-group-text p-0" style="border-radius:.375rem 0 0 .375rem;">
+            {{ form.country_code }}
+          </span>
+          {{ form.phone }}
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <label class="form-label d-block">Promo Code</label>
+        {{ form.promo_code }}
+      </div>
+      <div class="col-md-12">
+        <label class="form-label d-block">Notes</label>
+        {{ form.notes }}
+      </div>
+
+      <div class="col-md-12 text-right mt-3">
+        <button type="button" class="btn btn-secondary prev-btn">Previous</button>
+        <button type="submit" class="btn btn-primary">Submit Booking</button>
+      </div>
+    </div>
+  </fieldset>
+</form>
+
+
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Include necessary scripts -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        var currentStep = 0;
+        var steps = $(".form-step");
+        function showStep(index) {
+            steps.hide();
+            $(steps[index]).show();
+        }
+
+        $(".next-btn").click(function() {
+            if (currentStep < steps.length - 1) {
+                currentStep++;
+                showStep(currentStep);
+            }
+        });
+
+        $(".prev-btn").click(function() {
+            if (currentStep > 0) {
+                currentStep--;
+                showStep(currentStep);
+            }
+        });
+
+        // Initialize the form by showing the first step
+        showStep(currentStep);
+    });
+
+
+</script>
+
+
+<script>
+    $(document).ready(function () {
+        // Initially hide return time and checkout date
+        $('#return_time_container').hide();
+        $('#checkout_date_container').hide();
+
+        // Handle trip type changes
+        $('select[name="trip_type"]').on('change', function () {
+            const tripType = $(this).val();
+
+            if (tripType === 'Round Trip') {
+                // Round Trip selected
+                $('#return_time_container').show();
+                $('#checkout_date_container').show();
+                $('select[name="return_time"]').prop('required', true);
+                $('input[name="checkout_date"]').prop('required', true);
+            } else {
+                // One Way selected
+                $('#return_time_container').hide();
+                $('#checkout_date_container').hide();
+                $('select[name="return_time"]').prop('required', false).val('0');
+                $('input[name="checkout_date"]').prop('required', false).val('');
+            }
+        });
+
+        // Trigger change on page load to apply logic if pre-filled
+        $('select[name="trip_type"]').trigger('change');
+    });
+
+
+</script>
+
+
+<script src="https://maps.googleapis.com/maps/api/js?key={{ google_api_key }}&libraries=places"></script>
+<script>
+    function initAutocomplete() {
+        const pickupInput = document.getElementById('id_pickup_address');
+        const dropoffInput = document.getElementById('id_dropoff_address');
+        const pickupAutocomplete = new google.maps.places.Autocomplete(pickupInput);
+        const dropoffAutocomplete = new google.maps.places.Autocomplete(dropoffInput);
+
+        pickupAutocomplete.addListener('place_changed', function () {
+            const place = pickupAutocomplete.getPlace();
+            document.getElementById('id_pickup_latitude').value = place.geometry.location.lat();
+            document.getElementById('id_pickup_longitude').value = place.geometry.location.lng();
+        });
+
+        dropoffAutocomplete.addListener('place_changed', function () {
+            const place = dropoffAutocomplete.getPlace();
+            document.getElementById('id_dropoff_latitude').value = place.geometry.location.lat();
+            document.getElementById('id_dropoff_longitude').value = place.geometry.location.lng();
+        });
+    }
+    google.maps.event.addDomListener(window, 'load', initAutocomplete);
+
+</script>
+
+
+<style>
+    .common_style {
+        background-color: white;
+        font-size: 15px;
+        line-height: 28px;
+        padding: 17px 49px 17px 20px;
+        color: #055fa0;
+    }
+
+</style>
+
+<style>
+    /* Custom radio styling with your theme */
+.custom-radio .form-check-input {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 2px solid #b0322e; /* Logo red */
+    background-color: #fff5f5; /* Booking box bg */
+    margin-right: 8px;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.custom-radio .form-check-input:checked {
+    background-color: #b0322e;
+    border-color: #b0322e;
+}
+
+.custom-radio .form-check-input:checked::after {
+    content: '';
+    width: 8px;
+    height: 8px;
+    background: #fff;
+    border-radius: 50%;
+    position: absolute;
+    top: 4px;
+    left: 4px;
+}
+
+.custom-radio .form-check-label {
+    font-family: 'Gilda Display', serif;
+    font-size: 16px;
+    color: #055fa0; /* Blue accent */
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.custom-radio .form-check-input:checked + .form-check-label {
+    color: #b0322e; /* Highlight on select */
+    font-weight: 600;
+}
+
+
+</style>
+
+
+<!--<script>-->
+<!--$(document).ready(function () {-->
+<!--    // Hide return trip fields initially-->
+<!--    $('#trip2, #return_time_container, #checkout_date_container, #return_pickup_container, #return_dropoff_container').hide();-->
+
+<!--    // Handle trip type selection-->
+<!--    $('input[name="trip_type"]').on('change', function () {-->
+<!--        if ($(this).val() === 'Round Trip') {-->
+<!--            // Show return trip fields-->
+<!--            $('#trip2, #return_time_container, #checkout_date_container, #return_pickup_container, #return_dropoff_container').show();-->
+
+<!--            // Make them required-->
+<!--            $('#trip2 select').prop('required', true);-->
+<!--            $('#return_time_container select').prop('required', true);-->
+<!--            $('#checkout_date_container input').prop('required', true);-->
+<!--            $('#return_pickup_container input, #return_dropoff_container input').prop('required', true);-->
+
+<!--        } else {-->
+<!--            // Hide return trip fields-->
+<!--            $('#trip2, #return_time_container, #checkout_date_container, #return_pickup_container, #return_dropoff_container').hide();-->
+
+<!--            // Remove required + reset values-->
+<!--            $('#trip2 select').prop('required', false).val('');-->
+<!--            $('#return_time_container select').prop('required', false).val('');-->
+<!--            $('#checkout_date_container input').prop('required', false).val('');-->
+<!--            $('#return_pickup_container input, #return_dropoff_container input').prop('required', false).val('');-->
+<!--        }-->
+<!--    });-->
+
+<!--    // Run once on page load if a trip type is pre-selected-->
+<!--    $('input[name="trip_type"]:checked').trigger('change');-->
+<!--});-->
+<!--</script>-->
+
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const steps = document.querySelectorAll(".form-step");
+    const nextBtns = document.querySelectorAll(".next-btn");
+    const prevBtns = document.querySelectorAll(".prev-btn");
+
+    let currentStep = 0;
+
+    function showStep(stepIndex) {
+        steps.forEach((step, index) => {
+            step.style.display = index === stepIndex ? "block" : "none";
+        });
+    }
+
+    // Initial display
+    showStep(currentStep);
+
+    nextBtns.forEach(btn => {
+        btn.addEventListener("click", () => {
+            currentStep++;
+            if (currentStep >= steps.length) currentStep = steps.length - 1;
+            showStep(currentStep);
+        });
+    });
+
+    prevBtns.forEach(btn => {
+        btn.addEventListener("click", () => {
+            currentStep--;
+            if (currentStep < 0) currentStep = 0;
+            showStep(currentStep);
+        });
+    });
+
+    // Optional: Trip type toggle logic
+    const tripTypeRadios = document.querySelectorAll('input[name="trip_type"]');
+    const trip2 = document.getElementById("trip2");
+    const returnTimeContainer = document.getElementById("return_time_container");
+    const checkoutContainer = document.getElementById("checkout_date_container");
+
+    tripTypeRadios.forEach(radio => {
+        radio.addEventListener("change", function () {
+            if (this.value === "Round Trip") {
+                trip2.style.display = "flex";
+                returnTimeContainer.style.display = "block";
+                checkoutContainer.style.display = "block";
+            } else {
+                trip2.style.display = "none";
+                returnTimeContainer.style.display = "none";
+                checkoutContainer.style.display = "none";
+            }
+        });
+    });
+});
+</script>
+
+<!--<script>-->
+<!--  // toggle round trip fields + return_time required-->
+<!--  function toggleRoundTrip() {-->
+<!--    const isRound = document.querySelector('input[name="trip_type"]:checked')?.value === "Round Trip";-->
+<!--    document.getElementById('trip2').style.display = isRound ? '' : 'none';-->
+<!--    const returnTimeWrap = document.getElementById('return_time_container');-->
+<!--    returnTimeWrap.style.display = isRound ? '' : 'none';-->
+<!--    const rtSelect = returnTimeWrap.querySelector('select, input');-->
+<!--    if (rtSelect) rtSelect.required = isRound;-->
+<!--  }-->
+
+<!--  function getCSRFToken() {-->
+<!--    const el = document.querySelector('input[name=csrfmiddlewaretoken]');-->
+<!--    return el ? el.value : '';-->
+<!--  }-->
+
+<!--  async function updateQuote() {-->
+<!--    const params = new URLSearchParams();-->
+
+<!--    const tripType = document.querySelector('input[name="trip_type"]:checked')?.value || '';-->
+<!--    const transportType = document.querySelector('input[name="transport_type"]:checked')?.value || '';-->
+<!--    const pickup1 = document.querySelector('[name="pickup_location_1"]')?.value || '';-->
+<!--    const drop1 = document.querySelector('[name="dropoff_location_1"]')?.value || '';-->
+<!--    const pickup2 = document.querySelector('[name="pickup_location_2"]')?.value || '';-->
+<!--    const drop2 = document.querySelector('[name="dropoff_location_2"]')?.value || '';-->
+<!--    const pickupTime = document.querySelector('[name="pickup_time"]')?.value || '';-->
+<!--    const returnTime = document.querySelector('[name="return_time"]')?.value || '';-->
+<!--    const passengers = document.querySelector('[name="passengers"]')?.value || '1';-->
+
+<!--    params.set("trip_type", tripType);-->
+<!--    params.set("transport_type", transportType);-->
+<!--    params.set("pickup_location_1", pickup1);-->
+<!--    params.set("dropoff_location_1", drop1);-->
+<!--    if (tripType === "Round Trip") {-->
+<!--      params.set("pickup_location_2", pickup2);-->
+<!--      params.set("dropoff_location_2", drop2);-->
+<!--    }-->
+<!--    params.set("pickup_time", pickupTime);-->
+<!--    params.set("return_time", returnTime);-->
+<!--    params.set("passengers", passengers);-->
+
+<!--    try {-->
+<!--      const res = await fetch("{% url 'booking_quote' %}?" + params.toString(), {-->
+<!--        headers: {"X-CSRFToken": getCSRFToken()}-->
+<!--      });-->
+<!--      const data = await res.json();-->
+<!--      const display = document.getElementById("priceDisplay");-->
+<!--      if (data.price != null) {-->
+<!--        display.textContent = "€" + data.price.toFixed(2);-->
+<!--      } else {-->
+<!--        display.textContent = "Contact us";-->
+<!--      }-->
+<!--    } catch (e) {-->
+<!--      document.getElementById("priceDisplay").textContent = "Contact us";-->
+<!--    }-->
+<!--  }-->
+
+<!--  document.addEventListener("change", (e) => {-->
+<!--    if (-->
+<!--      e.target.matches('input[name="trip_type"]') ||-->
+<!--      e.target.matches('input[name="transport_type"]') ||-->
+<!--      e.target.matches('[name="pickup_location_1"], [name="dropoff_location_1"], [name="pickup_location_2"], [name="dropoff_location_2"]') ||-->
+<!--      e.target.matches('[name="pickup_time"], [name="return_time"]') ||-->
+<!--      e.target.matches('[name="passengers"]')-->
+<!--    ) {-->
+<!--      toggleRoundTrip();-->
+<!--      updateQuote();-->
+<!--    }-->
+<!--  });-->
+
+<!--  document.addEventListener("DOMContentLoaded", () => {-->
+<!--    toggleRoundTrip();-->
+<!--    updateQuote();-->
+
+<!--    // wizard buttons-->
+<!--    document.querySelector(".next-btn")?.addEventListener("click", () => {-->
+<!--      document.querySelectorAll(".form-step")[0].style.display = "none";-->
+<!--      document.querySelectorAll(".form-step")[1].style.display = "";-->
+<!--    });-->
+<!--    document.querySelector(".prev-btn")?.addEventListener("click", () => {-->
+<!--      document.querySelectorAll(".form-step")[1].style.display = "none";-->
+<!--      document.querySelectorAll(".form-step")[0].style.display = "";-->
+<!--    });-->
+<!--  });-->
+
+<!--  function initPlaces() {-->
+<!--    const pickupInput  = document.getElementById('id_pickup_address');-->
+<!--    const dropoffInput = document.getElementById('id_dropoff_address');-->
+<!--    if (pickupInput)  new google.maps.places.Autocomplete(pickupInput,  { types: ['geocode'] });-->
+<!--    if (dropoffInput) new google.maps.plases?.Autocomplete(dropoffInput, { types: ['geocode'] }) || new google.maps.places.Autocomplete(dropoffInput, { types: ['geocode'] });-->
+<!--  }-->
+<!--</script>-->
+<script async defer src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAPS_API_KEY }}&libraries=places&callback=initPlaces"></script>
+
+
+
+<!-- Dynamic UI + price JS (GET) -->
+<script>
+(function() {
+  const form = document.getElementById('bookingForm');
+  const priceDisplay = document.getElementById('priceDisplay');
+  const trip2 = document.getElementById('trip2');
+  const returnTimeContainer = document.getElementById('return_time_container');
+  const quoteUrl = form.dataset.quoteUrl;
+
+  function isRoundTripValue(v) { return String(v) === 'Round Trip'; }
+
+  function currentTripType() {
+    const checked = form.querySelector('input[name="trip_type"]:checked');
+    return checked ? checked.value : null;
+  }
+
+  function toggleRoundTripUI() {
+    const show = isRoundTripValue(currentTripType());
+    trip2.style.display = show ? '' : 'none';
+    returnTimeContainer.style.display = show ? '' : 'none';
+  }
+
+  let t;
+  const debounce = (fn, ms=250) => (...args) => { clearTimeout(t); t=setTimeout(()=>fn(...args), ms); };
+
+  function getParams() {
+    const params = new URLSearchParams();
+    const fields = [
+      'pickup_location_1','dropoff_location_1',
+      'pickup_location_2','dropoff_location_2',
+      'pickup_time','return_time','passengers','promo_code'
+    ];
+
+    const tripType = currentTripType();
+    if (tripType) params.set('trip_type', tripType);
+
+    const transportChecked = form.querySelector('input[name="transport_type"]:checked');
+    if (transportChecked) params.set('transport_type', transportChecked.value);
+
+    fields.forEach(name => {
+      const el = form.querySelector(`[name="${name}"]`);
+      if (el && el.value) params.set(name, el.value);
+    });
+    return params.toString();
+  }
+
+  async function requestQuote() {
+    const p1 = form.querySelector('[name="pickup_location_1"]')?.value;
+    const d1 = form.querySelector('[name="dropoff_location_1"]')?.value;
+    if (!p1 || !d1) { priceDisplay.textContent = '€0'; return; }
+
+    try {
+      const res = await fetch(`${quoteUrl}?${getParams()}`, { method: 'GET' });
+      const data = await res.json();
+      if (res.ok && data.price != null) {
+        priceDisplay.textContent = `€${data.price}`;
+      } else {
+        priceDisplay.textContent = '€0';
+      }
+    } catch(e) {
+      priceDisplay.textContent = '€0';
+    }
+  }
+
+  const debounced = debounce(requestQuote);
+  const drivers = [
+    'trip_type','transport_type',
+    'pickup_location_1','dropoff_location_1',
+    'pickup_location_2','dropoff_location_2',
+    'pickup_time','return_time','passengers','promo_code'
+  ];
+  drivers.forEach(name => {
+    form.querySelectorAll(`[name="${name}"]`).forEach(el => {
+      el.addEventListener('change', () => { if (name==='trip_type') toggleRoundTripUI(); debounced(); });
+      el.addEventListener('keyup', debounced);
+    });
+  });
+
+  toggleRoundTripUI();
+  debounced();
+})();
+</script>
+{% endblock %}

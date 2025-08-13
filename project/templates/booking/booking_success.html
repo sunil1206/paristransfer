@@ -1,0 +1,292 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+{% block content %}
+<section class="testimonials">
+  <div class="background bg-img bg-fixed section-padding pb-0"
+       data-background="{% static 'img/slider/4.png' %}" data-overlay-dark="0">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="booking-box">
+            <div class="head-box">
+              <h6>Cabs & Booking</h6>
+              <h4>Booking Form</h4>
+
+              {% if form.errors %}
+              <div class="alert alert-danger mt-3">
+                <strong>Form Errors:</strong>
+                <ul class="mb-0">
+                  {% for field in form %}
+                    {% for error in field.errors %}
+                      <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+                    {% endfor %}
+                  {% endfor %}
+                  {% for error in form.non_field_errors %}
+                    <li>{{ error }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+              {% endif %}
+            </div>
+
+            <div class="booking-inner clearfix">
+              <form id="bookingForm" method="POST" action="" class="form1 clearfix"
+                    data-quote-url="{% url 'booking_quote' %}">
+                {% csrf_token %}
+
+                <!-- Step 1: Trip Details -->
+                <fieldset class="form-step">
+                  <div class="row g-3">
+                    <div class="col-md-3">
+                      <label class="form-label d-block">Estimated Price</label>
+                      <div id="priceDisplay" class="fw-bold" style="font-size:1.25rem;color:#055fa0;">€0</div>
+                    </div>
+
+                    <div class="col-md-3">
+                      <label class="form-label d-block mb-2">Trip Type</label>
+                      {% for radio in form.trip_type %}
+                        <div class="form-check form-check-inline custom-radio">
+                          {{ radio.tag }}
+                          <label class="form-check-label" for="{{ radio.id_for_label }}">{{ radio.choice_label }}</label>
+                        </div>
+                      {% endfor %}
+                    </div>
+
+                    <div class="col-md-2">
+                      <label class="form-label d-block">Passengers</label>
+                      {{ form.passengers }}
+                    </div>
+
+                    <!-- Leg 1 -->
+                    <div class="row" id="leg1">
+                      <div class="col-md-3">
+                        <label class="form-label d-block">Pickup Location</label>
+                        {{ form.pickup_location_1 }}
+                      </div>
+                      <div class="col-md-3">
+                        <label class="form-label d-block">Drop Off Location</label>
+                        {{ form.dropoff_location_1 }}
+                      </div>
+                      <div class="col-md-3">
+                        <label class="form-label d-block">Pickup Address (optional)</label>
+                        {{ form.pickup_address_1 }}
+                      </div>
+                      <div class="col-md-3">
+                        <label class="form-label d-block">Dropoff Address (optional)</label>
+                        {{ form.dropoff_address_1 }}
+                      </div>
+                    </div>
+
+                    <!-- Leg 2 -->
+                    <div class="row" id="leg2" style="display:none;">
+                      <div class="col-md-3">
+                        <label class="form-label d-block">Return Pickup Location</label>
+                        {{ form.pickup_location_2 }}
+                      </div>
+                      <div class="col-md-3">
+                        <label class="form-label d-block">Return Drop Off Location</label>
+                        {{ form.dropoff_location_2 }}
+                      </div>
+                      <div class="col-md-3">
+                        <label class="form-label d-block">Return Pickup Address (optional)</label>
+                        {{ form.pickup_address_2 }}
+                      </div>
+                      <div class="col-md-3">
+                        <label class="form-label d-block">Return Dropoff Address (optional)</label>
+                        {{ form.dropoff_address_2 }}
+                      </div>
+                    </div>
+
+                    <!-- Transport -->
+                    <div class="col-md-3">
+                      <label class="form-label d-block mb-2">Transport Type</label>
+                      {% for radio in form.transport_type %}
+                        <div class="form-check">
+                          {{ radio.tag }}
+                          <label class="form-check-label d-flex align-items-center" for="{{ radio.id_for_label }}">
+                            {% if radio.choice_label == "Car" %}
+                              <img src="{% static 'img/car.png' %}" alt="Car" width="40" class="me-2"> Car
+                            {% elif radio.choice_label == "Van" %}
+                              <img src="{% static 'img/van.png' %}" alt="Van" width="40" class="me-2"> Van
+                            {% else %} {{ radio.choice_label }} {% endif %}
+                          </label>
+                        </div>
+                      {% endfor %}
+                    </div>
+
+                    <!-- Times -->
+                    <div class="col-md-3">
+                      <label class="form-label d-block">Pickup Time</label>
+                      {{ form.pickup_time }}
+                    </div>
+                    <div class="col-md-3" id="return_time_container" style="display:none;">
+                      <label class="form-label d-block">Return Time</label>
+                      {{ form.return_time }}
+                    </div>
+
+                    <div class="col-12 text-end mt-3">
+                      <button type="button" class="btn btn-primary next-btn">Next</button>
+                    </div>
+                  </div>
+                </fieldset>
+
+                <!-- Step 2 -->
+                <fieldset class="form-step" style="display:none;">
+                  <div class="row g-3">
+                    <div class="col-md-3">
+                      <label class="form-label d-block">Check-in Date</label>
+                      {{ form.checkin_date }}
+                    </div>
+                    <div class="col-md-3" id="checkout_date_container" style="display:none;">
+                      <label class="form-label d-block">Checkout Date</label>
+                      {{ form.checkout_date }}
+                    </div>
+                    <div class="col-md-3">
+                      <label class="form-label d-block">Booster Seats</label>
+                      {{ form.booster_seats }}
+                    </div>
+                    <div class="col-md-3">
+                      <label class="form-label d-block">Flight Number</label>
+                      {{ form.flight_number }}
+                    </div>
+
+                    <div class="col-md-4"><label class="form-label d-block">Adults</label>{{ form.adults }}</div>
+                    <div class="col-md-4"><label class="form-label d-block">Children</label>{{ form.children }}</div>
+                    <div class="col-md-4"><label class="form-label d-block">Luggage</label>{{ form.luggage }}</div>
+
+                    <div class="col-md-6"><label class="form-label d-block">First Name</label>{{ form.first_name }}</div>
+                    <div class="col-md-6"><label class="form-label d-block">Last Name</label>{{ form.last_name }}</div>
+                    <div class="col-md-6"><label class="form-label d-block">Email</label>{{ form.email }}</div>
+
+                    <div class="col-md-6">
+                      <label class="form-label d-block">Phone Number</label>
+                      <div class="input-group">
+                        <span class="input-group-text p-0" style="border-radius:.375rem 0 0 .375rem;">
+                          {{ form.country_code }}
+                        </span>
+                        {{ form.phone }}
+                      </div>
+                    </div>
+
+                    <div class="col-md-6"><label class="form-label d-block">Promo Code</label>{{ form.promo_code }}</div>
+                    <div class="col-md-12"><label class="form-label d-block">Notes</label>{{ form.notes }}</div>
+
+                    <div class="col-12 text-end mt-3">
+                      <button type="button" class="btn btn-outline-secondary prev-btn">Previous</button>
+                      <button type="submit" class="btn btn-success">Submit Booking</button>
+                    </div>
+                  </div>
+                </fieldset>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Wizard -->
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const steps = document.querySelectorAll(".form-step");
+    const nextBtns = document.querySelectorAll(".next-btn");
+    const prevBtns = document.querySelectorAll(".prev-btn");
+    let i = 0; const show = n => steps.forEach((s,k)=> s.style.display = (k===n?'block':'none'));
+    show(i);
+    nextBtns.forEach(b=>b.addEventListener("click", ()=>{ i=Math.min(i+1,steps.length-1); show(i);} ));
+    prevBtns.forEach(b=>b.addEventListener("click", ()=>{ i=Math.max(i-1,0); show(i);} ));
+  });
+</script>
+
+<!-- Round trip UI -->
+<script>
+(function(){
+  const f = document.getElementById('bookingForm');
+  const leg2 = document.getElementById('leg2');
+  const rt = document.getElementById('return_time_container');
+  const co = document.getElementById('checkout_date_container');
+
+  function setReq(name,on){ const el=f.querySelector(`[name="${name}"]`); if(!el)return; on?el.setAttribute('required','required'):el.removeAttribute('required'); }
+  function curTrip(){ const c=f.querySelector('input[name="trip_type"]:checked'); return c?c.value:null; }
+  function isRT(){ return curTrip()==="Round Trip"; }
+
+  function toggle(){
+    const show=isRT();
+    leg2.style.display = show ? '' : 'none';
+    rt.style.display = show ? '' : 'none';
+    co.style.display = show ? '' : 'none';
+    setReq("pickup_location_2", show);
+    setReq("dropoff_location_2", show);
+    setReq("return_time", show);
+
+    // auto reverse if empty
+    const p1=f.querySelector('[name="pickup_location_1"]');
+    const d1=f.querySelector('[name="dropoff_location_1"]');
+    const p2=f.querySelector('[name="pickup_location_2"]');
+    const d2=f.querySelector('[name="dropoff_location_2"]');
+    if (show && p1?.value && d1?.value && p2 && d2 && !p2.value && !d2.value) {
+      p2.value=d1.value; d2.value=p1.value;
+      p2.dispatchEvent(new Event('change')); d2.dispatchEvent(new Event('change'));
+    }
+  }
+  f.addEventListener("change", e=>{ if(e.target.name==="trip_type") toggle(); });
+  toggle();
+})();
+</script>
+
+<!-- Live quote -->
+<script>
+(function(){
+  const f = document.getElementById('bookingForm');
+  const price = document.getElementById('priceDisplay');
+  const url = f.dataset.quoteUrl;
+
+  let t; const debounce=(fn,ms=250)=>(...a)=>{clearTimeout(t);t=setTimeout(()=>fn(...a),ms);};
+  const trip=()=>{ const c=f.querySelector('input[name="trip_type"]:checked'); return c?c.value:null; };
+
+  function qs(){
+    const p=new URLSearchParams();
+    const fields=['pickup_location_1','dropoff_location_1','pickup_location_2','dropoff_location_2','pickup_time','return_time','passengers','promo_code'];
+    const tr=trip(); if(tr) p.set('trip_type',tr);
+    const veh=f.querySelector('input[name="transport_type"]:checked'); if(veh) p.set('transport_type',veh.value);
+    fields.forEach(n=>{ const el=f.querySelector(`[name="${n}"]`); if(el && el.value) p.set(n,el.value); });
+    return p.toString();
+  }
+  async function quote(){
+    const p1=f.querySelector('[name="pickup_location_1"]')?.value;
+    const d1=f.querySelector('[name="dropoff_location_1"]')?.value;
+    if(!p1||!d1){ price.textContent='€0'; return; }
+    try{
+      const res=await fetch(`${url}?${qs()}`,{method:'GET'});
+      const data=await res.json();
+      price.textContent=(res.ok && data.price!=null)?`€${data.price}`:'€0';
+    }catch{ price.textContent='€0'; }
+  }
+  const go=debounce(quote,250);
+  ['trip_type','transport_type','pickup_location_1','dropoff_location_1','pickup_location_2','dropoff_location_2','pickup_time','return_time','passengers','promo_code']
+    .forEach(n=> f.querySelectorAll(`[name="${n}"]`).forEach(el=>{ el.addEventListener('change',go); el.addEventListener('keyup',go);}));
+  go();
+})();
+</script>
+
+<!-- Google Places (optional for addresses) -->
+<script>
+  function initPlaces(){
+    ['id_pickup_address_1','id_dropoff_address_1','id_pickup_address_2','id_dropoff_address_2'].forEach(id=>{
+      const el=document.getElementById(id);
+      if(el && window.google?.maps?.places){ new google.maps.places.Autocomplete(el,{types:['geocode']}); }
+    });
+  }
+</script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAPS_API_KEY }}&libraries=places&callback=initPlaces"></script>
+
+<style>
+  .custom-radio .form-check-input{appearance:none;-webkit-appearance:none;width:18px;height:18px;border-radius:50%;border:2px solid #b0322e;background:#fff5f5;margin-right:8px;cursor:pointer;position:relative;transition:.3s;}
+  .custom-radio .form-check-input:checked{background:#b0322e;border-color:#b0322e;}
+  .custom-radio .form-check-input:checked::after{content:'';width:8px;height:8px;background:#fff;border-radius:50%;position:absolute;top:4px;left:4px;}
+  .custom-radio .form-check-label{font-family:'Gilda Display',serif;font-size:16px;color:#055fa0;cursor:pointer;transition:.3s;}
+  .custom-radio .form-check-input:checked + .form-check-label{color:#b0322e;font-weight:600;}
+</style>
+{% endblock %}

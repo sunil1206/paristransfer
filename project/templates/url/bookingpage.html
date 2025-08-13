@@ -15,18 +15,8 @@
 {% block og_image %} URL{% endblock %}
 
 {% block content %}
-<!-- Header Banner -->
-    <div class="banner-header section-padding valign bg-img bg-fixed" data-overlay-dark="4" data-background="{% static 'img/slider/1.jpg' %}">
-        <div class="container">
-            <div class="row">
-                <div class="col-md-12 caption mt-90">
-                    <h5>Luxury Cab Service</h5>
-                    <h1>About Us</h1>
-                </div>
-            </div>
-        </div>
-    </div>
+
 {% include 'core/nav.html' %}
-{% include 'booking/booking.html' %}
+{% include 'booking/booking_js.html' %}
 {% include 'core/footer.html' %}
 {% endblock %}

@@ -1,0 +1,41 @@
+
+<main class="container">
+  {% for slide in slider_items|slice:":1" %}
+  <section class="hero container">
+    <span>
+      {% for i in "12345"|make_list %}
+        {% if i|add:"0" <= slide.rating %}
+          <i class="star-rating"></i>
+        {% else %}
+          <i class="star-rating-empty"></i>
+        {% endif %}
+      {% endfor %}
+    </span>
+
+    <h1 class="hero-title-primary">{{ slide.title }}</h1>
+    <p class="hero-title-sub">{{ slide.subtitle }}</p>
+
+    {% if slide.link %}
+      <a href="{{ slide.link }}" class="btn btn-primary">View Details</a>
+    {% endif %}
+  </section>
+
+  <div class="hero-image">
+    <figure>
+      <img
+        src="{{ slide.image.url }}"
+        alt="{{ slide.alt_text|default:slide.title }}"
+        class="img-fluid"
+        loading="eager"
+      />
+    </figure>
+  </div>
+  {% empty %}
+  <!-- Fallback if no active slides -->
+  <section class="hero container">
+    <h1 class="hero-title-primary">Meet Samantha</h1>
+    <p class="hero-title-sub">A Fully Cloud Based AI Operating System That Understands You</p>
+    <button class="btn btn-primary">Try For Free</button>
+  </section>
+  {% endfor %}
+</main>

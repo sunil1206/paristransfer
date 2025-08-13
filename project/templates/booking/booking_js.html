@@ -1,0 +1,561 @@
+{% extends "core/base.html" %}
+{% load static %}
+{% block content %}
+
+<div class="booking-hero" style="margin-top: 5%;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-11 col-md-10 col-lg-12">
+                <div class="glass-card shadow-lg">
+                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
+                        <div>
+                            <h2 class="page-title m-0">Book Your Transfer</h2>
+                            <p class="subtitle m-0">Fill all fields to move to the next step</p>
+                        </div>
+                        <div class="estimate-badge" id="estimateBadge">
+                            <span class="label">Estimated</span>
+                            <span class="value" id="priceDisplay">€00.00</span>
+                        </div>
+                    </div>
+
+                    {% if form.errors %}
+                    <div class="alert alert-danger mt-2 mb-3">
+                        <strong>Form Errors</strong>
+                        <ul class="mb-0 ps-3">
+                            {% for field in form %}
+                            {% for error in field.errors %}
+                            <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+                            {% endfor %}
+                            {% endfor %}
+                            {% for error in form.non_field_errors %}
+                            <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    {% endif %}
+
+                    <!-- FORM -->
+                    <!-- If you don't use a namespace, replace 'book:booking_quote' with 'booking_quote' -->
+                    <form id="msform" class="text-start" method="POST" action=""
+                          data-quote-url="{% url 'booking_quote' %}">
+                        {% csrf_token %}
+
+                        <!-- progressbar -->
+                        <ul id="progressbar" class="mb-3">
+                            <li class="active">
+    <i class="fa fa-road" aria-hidden="true"></i> <strong>Trip</strong>
+</li>
+<li>
+    <i class="fa fa-map-marker-alt" aria-hidden="true"></i> <strong>Addresses & Dates</strong>
+</li>
+<li>
+    <i class="fa fa-user-friends" aria-hidden="true"></i> <strong>Passengers & Contact</strong>
+</li>
+
+                        </ul>
+                        <div class="progress mb-4">
+                            <div class="progress-bar progress-bar-striped progress-bar-animated"
+                                 role="progressbar"></div>
+                        </div>
+
+                        <!-- ===================== STEP 1: TRIP ===================== -->
+                        <fieldset>
+                            <div class="form-card">
+                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                    <h3 class="fs-title m-0">Trip Details</h3>
+                                    <span class="step-count">Step 1 / 3</span>
+                                </div>
+
+<div class="row">
+    <!-- Trip type -->
+    <div class="col-md-4 mb-3">
+        <label class="fieldlabels d-block mb-1">Trip Type *</label>
+        <div class="toggle-pills d-flex flex-wrap gap-2">
+            {% for radio in form.trip_type %}
+            <label class="pill">
+                {{ radio.tag }} <span>{{ radio.choice_label }}</span>
+            </label>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Transport type -->
+    <div class="col-md-4 mb-3">
+        <label class="fieldlabels d-block mb-1">Transport Type *</label>
+        <div class="toggle-pills d-flex flex-wrap gap-2">
+            {% for radio in form.transport_type %}
+            <label class="pill">
+                {{ radio.tag }}
+                <span class="d-flex align-items-center gap-2">
+                    {% if radio.choice_label == "Car" %}
+<!--                        <img src="{% static 'img/car.png' %}" alt="Car" width="24"> -->
+                    Car
+                    {% elif radio.choice_label == "Van" %}
+<!--                        <img src="{% static 'img/van.png' %}" alt="Van" width="24"> -->
+                    Van
+                    {% else %}
+                        {{ radio.choice_label }}
+                    {% endif %}
+                </span>
+            </label>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Passengers -->
+    <div class="col-md-4 mb-3">
+        <label class="fieldlabels d-block mb-1">Passengers *</label>
+        {{ form.passengers }}
+    </div>
+</div>
+
+                                <!-- Leg 1 -->
+                                <div class="row g-3" id="leg1">
+                                    <div class="col-md-6">
+                                        <label class="fieldlabels d-block mb-1">Pickup Location *</label>
+                                        {{ form.pickup_location_1 }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="fieldlabels d-block mb-1">Dropoff Location *</label>
+                                        {{ form.dropoff_location_1 }}
+                                    </div>
+                                </div>
+
+                                <!-- Leg 2 (Round Trip) -->
+                                <div class="row g-3 mt-1" id="leg2" style="display:none;">
+                                    <div class="col-md-6">
+                                        <label class="fieldlabels d-block mb-1">Return Pickup Location *</label>
+                                        {{ form.pickup_location_2 }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="fieldlabels d-block mb-1">Return Dropoff Location *</label>
+                                        {{ form.dropoff_location_2 }}
+                                    </div>
+                                </div>
+
+                                <!-- Times -->
+                                <div class="row g-3 mt-1">
+                                    <div class="col-md-6">
+                                        <label class="fieldlabels d-block mb-1">Pickup Time *</label>
+                                        {{ form.pickup_time }}
+                                    </div>
+                                    <div class="col-md-6" id="return_time_container" style="display:none;">
+                                        <label class="fieldlabels d-block mb-1">Return Time *</label>
+                                        {{ form.return_time }}
+                                    </div>
+                                </div>
+
+                                <div class="hint small mt-2" id="quoteHint">Select pickup & drop-off to get an
+                                    estimate.
+                                </div>
+                            </div>
+                            <div class="wizard-nav">
+                                <button type="button" name="next" class="next action-button">Next</button>
+                            </div>
+                        </fieldset>
+
+                        <!-- ===================== STEP 2: ADDRESSES & DATES ===================== -->
+                        <fieldset>
+                            <div class="form-card">
+                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                    <h3 class="fs-title m-0">Addresses & Dates</h3>
+                                    <span class="step-count">Step 2 / 3</span>
+                                </div>
+
+                                <div class="row g-3">
+                                    <div class="col-md-6">
+                                        <label class="fieldlabels d-block mb-1">Pickup Address (optional)</label>
+                                        {{ form.pickup_address }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="fieldlabels d-block mb-1">Dropoff Address (optional)</label>
+                                        {{ form.dropoff_address }}
+                                    </div>
+                                </div>
+
+                                <div class="row g-3 mt-1">
+                                    <div class="col-md-4">
+                                        <label class="fieldlabels d-block mb-1">Check-in Date</label>
+                                        {{ form.checkin_date }}
+                                    </div>
+                                    <div class="col-md-4" id="checkout_date_container" style="display:none;">
+                                        <label class="fieldlabels d-block mb-1">Checkout Date (Round Trip)</label>
+                                        {{ form.checkout_date }}
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="fieldlabels d-block mb-1">Flight Number</label>
+                                        {{ form.flight_number }}
+                                    </div>
+                                </div>
+
+                                <div class="row g-3 mt-1">
+                                    <div class="col-md-6">
+                                        <label class="fieldlabels d-block mb-1">Booster Seats</label>
+                                        {{ form.booster_seats }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="fieldlabels d-block mb-1">Promo Code</label>
+                                        {{ form.promo_code }}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="wizard-nav">
+                                <button type="button" name="previous" class="previous action-button-previous">Previous
+                                </button>
+                                <button type="button" name="next" class="next action-button">Next</button>
+                            </div>
+                        </fieldset>
+
+                        <!-- ===================== STEP 3: PASSENGERS & CONTACT ===================== -->
+                        <fieldset>
+                            <div class="form-card">
+                                <div class="d-flex align-items-center justify-content-between mb-3">
+                                    <h3 class="fs-title m-0">Passengers & Contact</h3>
+                                    <span class="step-count">Step 3 / 3</span>
+                                </div>
+
+                                <div class="row g-3">
+                                    <div class="col-md-4">
+                                        <label class="fieldlabels d-block mb-1">Adults *</label>
+                                        {{ form.adults }}
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="fieldlabels d-block mb-1">Children</label>
+                                        {{ form.children }}
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label class="fieldlabels d-block mb-1">Luggage</label>
+                                        {{ form.luggage }}
+                                    </div>
+                                </div>
+
+                                <div class="row g-3 mt-1">
+                                    <div class="col-md-6">
+                                        <label class="fieldlabels d-block mb-1">First Name *</label>
+                                        {{ form.first_name }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="fieldlabels d-block mb-1">Last Name *</label>
+                                        {{ form.last_name }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="fieldlabels d-block mb-1">Email *</label>
+                                        {{ form.email }}
+                                    </div>
+                                    <div class="col-md-6">
+    <label class="fieldlabels d-block mb-1">Phone *</label>
+    <div class="row g-2 align-items-center">
+        <div class="col-4">
+            <div class="form-floating">
+                {{ form.country_code }}
+                <label>Code</label>
+            </div>
+        </div>
+        <div class="col-8">
+            <div class="form-floating">
+                {{ form.phone }}
+                <label>Number</label>
+            </div>
+        </div>
+    </div>
+</div>
+
+                                </div>
+
+                                <div class="mt-2">
+                                    <label class="fieldlabels d-block mb-1">Notes</label>
+                                    {{ form.notes }}
+                                </div>
+
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <div class="estimate-badge small">
+                                        <span class="label">Estimated</span>
+                                        <span class="value" id="priceDisplayStep3">€0.00</span>
+                                    </div>
+                                    <button type="submit" class="action-button">Submit</button>
+                                </div>
+                            </div>
+                            <div class="wizard-nav">
+                                <button type="button" name="previous" class="previous action-button-previous">Previous
+                                </button>
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===================== STYLES ===================== -->
+<style>
+.booking-hero{
+  background: radial-gradient(1200px 600px at 10% -10%, #e9f2ff 0%, transparent 60%),
+              linear-gradient(180deg, #f7fbff 0%, #ffffff 100%);
+  padding: 32px 0 60px;
+}
+.glass-card{ background: rgba(255,255,255,.75); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,.6); border-radius: 18px; padding: 22px 20px; }
+.page-title{ font-size: 26px; font-weight: 700; color:#1d2b4f}
+.subtitle{ color:#6a7ba3 }
+.estimate-badge{ display:flex; align-items:center; gap:8px; background:#0d6efd10; border:1px dashed #0d6efd40; padding:8px 12px; border-radius:12px; }
+.estimate-badge .label{ font-size:12px; text-transform:uppercase; color:#0d6efd; letter-spacing:.04em }
+.estimate-badge .value{ font-weight:800; color:#0d6efd }
+
+#progressbar{display:flex; gap:12px; padding:0; list-style:none}
+#progressbar li{ flex:1; position:relative; text-align:center; color:#94a3b8; font-weight:600; font-size:14px; }
+#progressbar li::before{ content:'';  display:block; width:44px; height:44px; margin:0 auto 8px; background:#e5eaf4; border-radius:50%; box-shadow: inset 0 0 0 2px #dde6fb; }
+#progressbar li.active{ color:#673AB7 }
+#progressbar li.active::before{ background:#673AB7 }
+
+.progress{height:10px; background:#eef2ff; border-radius:8px; overflow:hidden}
+.progress-bar{background:#673AB7}
+
+.fs-title{font-size:20px; color:#1d2b4f}
+.step-count{font-weight:700; color:#64748b}
+.fieldlabels{color:#55627a}
+
+.toggle-pills{ display:flex; flex-wrap:wrap; gap:8px }
+.toggle-pills .pill{ border:1px solid #d8e0ff; background:#f6f8ff; color:#26324d; border-radius:999px; padding:8px 12px; cursor:pointer; user-select:none; display:flex; align-items:center; gap:8px; transition:all .15s; }
+.toggle-pills .pill:hover{ transform:translateY(-1px); box-shadow:0 4px 12px rgba(30,30,90,.08) }
+.toggle-pills .pill input{ display:none }
+.toggle-pills .pill input:checked + span,
+.toggle-pills .pill input:checked ~ span{ color:#0b58f5; font-weight:700 }
+
+#msform fieldset{border:0; border-radius:16px; background:#fff; padding:18px}
+.form-card select, .form-card input, .form-card input, .form-card textarea {
+  background:#f1f5ff; border:1px solid #dfe6ff; border-radius:12px;
+}
+.form-card select:focus, .form-card input:focus, .form-card textarea:focus{
+  outline:none; border-color:#94b1ff; box-shadow:0 0 0 3px rgba(13,110,253,.15)
+}
+
+.action-button, .action-button-previous{ border:0; border-radius:12px; padding:10px 16px; font-weight:700; cursor:pointer }
+.action-button{ background:#673AB7; color:#fff }
+.action-button:hover{ filter:brightness(1.05) }
+.action-button-previous{ background:#616161; color:#fff }
+.wizard-nav{ display:flex; justify-content:flex-end; gap:10px; margin-top:10px }
+.hint{ color:#6b7280 }
+.rounded-start{ border-radius:.5rem 0 0 .5rem !important }
+
+
+</style>
+
+<!-- ===================== JS: Wizard ===================== -->
+<script>
+(function(){
+  const sets = Array.from(document.querySelectorAll("#msform fieldset"));
+  const bar  = document.querySelector(".progress-bar");
+  const steps= Array.from(document.querySelectorAll("#progressbar li"));
+  let i = 0;
+  function show(idx){
+    sets.forEach((fs,k)=> fs.style.display = (k===idx ? "block" : "none"));
+    steps.forEach((li,k)=> li.classList.toggle("active", k <= idx));
+    bar.style.width = (((idx+1)/sets.length)*100).toFixed() + "%";
+  }
+  document.addEventListener("click", (e)=>{
+    if(e.target.classList.contains("next")){ i = Math.min(i+1, sets.length-1); show(i); }
+    if(e.target.classList.contains("previous")){ i = Math.max(i-1, 0); show(i); }
+  });
+  show(0);
+})();
+
+
+</script>
+
+<!-- ===================== JS: Round Trip UI ===================== -->
+<script>
+(function(){
+  const form = document.getElementById("msform");
+  const leg2 = document.getElementById("leg2");
+  const rt   = document.getElementById("return_time_container");
+  const co   = document.getElementById("checkout_date_container");
+  const get = sel => (form.querySelector(sel) || {}).value || "";
+
+  const currentTrip = () =>
+    (form.querySelector('input[name="trip_type"]:checked') || {}).value
+    || (form.querySelector('select[name="trip_type"]') || {}).value || "";
+
+  const setReq = (name,on)=>{
+    const el=form.querySelector(`[name="${name}"]`); if(!el) return;
+    on ? el.setAttribute('required','required') : el.removeAttribute('required');
+  };
+
+  function toggleRT(){
+    const isRT = currentTrip() === "Round Trip";
+    leg2.style.display = isRT ? "" : "none";
+    rt.style.display   = isRT ? "" : "none";
+    co.style.display   = isRT ? "" : "none";
+    setReq("pickup_location_2", isRT);
+    setReq("dropoff_location_2", isRT);
+    setReq("return_time", isRT);
+
+    // auto-reverse if empty
+    const p1 = get('[name="pickup_location_1"]');
+    const d1 = get('[name="dropoff_location_1"]');
+    const p2 = form.querySelector('[name="pickup_location_2"]');
+    const d2 = form.querySelector('[name="dropoff_location_2"]');
+    if(isRT && p1 && d1 && p2 && d2 && !p2.value && !d2.value){
+      p2.value = d1; d2.value = p1;
+      p2.dispatchEvent(new Event("change")); d2.dispatchEvent(new Event("change"));
+    }
+  }
+  form.addEventListener("change", (e)=>{ if(e.target.name==="trip_type") toggleRT(); });
+  toggleRT();
+})();
+
+
+</script>
+
+<!-- ===================== JS: Live Price (robust + friendly messages) ===================== -->
+<script>
+(function(){
+  const form = document.getElementById('msform');
+  const badgeTop = document.getElementById('priceDisplay');
+  const badgeBottom = document.getElementById('priceDisplayStep3');
+  const priceEls = [badgeTop, badgeBottom].filter(Boolean);
+  const quoteUrl = form.dataset.quoteUrl;
+  const hint = document.getElementById('quoteHint');
+
+  // Ensure defaults: check the first radio for trip & transport if none selected
+  function ensureDefaults() {
+    const tripChecked = form.querySelector('input[name="trip_type"]:checked');
+    if (!tripChecked) form.querySelector('input[name="trip_type"]')?.click();
+    const vehChecked = form.querySelector('input[name="transport_type"]:checked');
+    if (!vehChecked) form.querySelector('input[name="transport_type"]')?.click();
+  }
+
+  const getTripType = () =>
+    (form.querySelector('input[name="trip_type"]:checked') || {}).value
+    || (form.querySelector('select[name="trip_type"]') || {}).value || "One Way";
+
+  const getTransport = () =>
+    (form.querySelector('input[name="transport_type"]:checked') || {}).value
+    || (form.querySelector('select[name="transport_type"]') || {}).value || "Car";
+
+  function buildQuery(){
+    const p = new URLSearchParams();
+    const put = (k,v)=>{ if(v !== undefined && v !== null && String(v).trim() !== "") p.set(k,v); };
+    put("trip_type", getTripType());
+    put("transport_type", getTransport());
+    ["pickup_location_1","dropoff_location_1","pickup_location_2","dropoff_location_2",
+     "pickup_time","return_time","passengers","promo_code"].forEach(n=>{
+      const el = form.querySelector(`[name="${n}"]`);
+      if(el) put(n, el.value);
+    });
+    return p.toString();
+  }
+
+  function showPrice(val){ priceEls.forEach(el=> el.textContent = val); }
+  function showMessage(msg){ if(hint){ hint.textContent = msg; hint.style.display = ''; } }
+  function clearMessage(){ if(hint){ hint.style.display = 'none'; } }
+
+  let t; const debounce=(fn,ms=220)=>(...a)=>{ clearTimeout(t); t=setTimeout(()=>fn(...a),ms); };
+
+  async function fetchQuote(){
+    ensureDefaults();
+
+    const p1 = form.querySelector('[name="pickup_location_1"]')?.value;
+    const d1 = form.querySelector('[name="dropoff_location_1"]')?.value;
+    if(!p1 || !d1){
+      showPrice("€0.00");
+      showMessage("Select pickup & drop-off to get an estimate.");
+      return;
+    }
+
+    try{
+      const res = await fetch(`${quoteUrl}?${buildQuery()}`, { method:'GET' });
+      const data = await res.json();
+
+      if (data && data.price != null) {
+        clearMessage();
+        showPrice(`€${Number(data.price).toFixed(2)}`);
+      } else {
+        showPrice("€0.00");
+        if (data && data.error === "missing_leg1") {
+          showMessage("Choose both pickup & drop-off to see the price.");
+        } else {
+          showMessage("No price found for this route/party. Try swapping direction or adjusting passengers.");
+        }
+      }
+    }catch(_){
+      showPrice("€0.00");
+      showMessage("Unable to fetch estimate. Please try again.");
+    }
+  }
+
+  const go = debounce(fetchQuote, 250);
+  [
+    "trip_type","transport_type",
+    "pickup_location_1","dropoff_location_1",
+    "pickup_location_2","dropoff_location_2",
+    "pickup_time","return_time","passengers","promo_code"
+  ].forEach(name=>{
+    form.querySelectorAll(`[name="${name}"]`).forEach(el=>{
+      el.addEventListener("change", go);
+      el.addEventListener("keyup", go);
+    });
+  });
+
+  ensureDefaults();
+  go(); // initial
+})();
+
+
+</script>
+
+<!-- ===================== Google Places (optional) ===================== -->
+<script>
+  function initPlaces(){
+    const ids = ['id_pickup_address','id_dropoff_address'];
+    ids.forEach(id=>{
+      const el = document.getElementById(id);
+      if(el && window.google?.maps?.places){
+        new google.maps.places.Autocomplete(el,{ types:['geocode'] });
+      }
+    });
+  }
+
+
+</script>
+<script async defer
+        src="https://maps.googleapis.com/maps/api/js?key={{ GOOGLE_MAPS_API_KEY }}&libraries=places&callback=initPlaces"></script>
+
+<!-- (Optional) Debug logs to console for quotes -->
+
+<script>
+(function(){
+  const form = document.getElementById('msform');
+
+  function ensureDefaults() {
+    const tripChecked = form.querySelector('input[name="trip_type"]:checked');
+    if (!tripChecked) {
+      const firstTrip = form.querySelector('input[name="trip_type"]');
+      if (firstTrip) {
+        firstTrip.checked = true;
+        firstTrip.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+    }
+
+    const vehChecked = form.querySelector('input[name="transport_type"]:checked');
+    if (!vehChecked) {
+      const firstVeh = form.querySelector('input[name="transport_type"]');
+      if (firstVeh) {
+        firstVeh.checked = true;
+        firstVeh.dispatchEvent(new Event('change', { bubbles: true }));
+      }
+    }
+  }
+
+  // expose ensureDefaults to the other script that calls it
+  window.__ensureDefaults = ensureDefaults;
+})();
+
+
+</script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+<style>
+
+
+</style>
+{% endblock %}
