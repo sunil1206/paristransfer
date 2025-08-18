@@ -1,37 +1,31 @@
 {% load static %}
 
-<section class="about section-padding">
+{% load static %}
+
+<section class="section-padding bg-cream">
     <div class="container">
         <div class="row">
-            <div class="col col-md-8 animate-box" data-animate-effect="fadeInUp">
-<!--                <img src="{{ about.image1.url }}" alt="{{ about.alt_image1 }}" class="mt-90 mb-30">-->
-                {% include 'booking/booking_js.html' %}
+            <div class="col-md-12">
+                <div class="section-subtitle">Booking</div>
+                <div class="section-title">Booking</div>
             </div>
-<!--            <div class="col col-md-3 animate-box" data-animate-effect="fadeInUp">-->
-<!--                <img src="{{ about.image2.url }}" alt="{{ about.alt_image2 }}">-->
-<!--            </div>-->
+        </div>
 
+        <div class="max-w-7xl mx-auto">
 
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
 
+                <!-- Left Column -->
+                <div class="md:col-span-8 animate-box" data-animate-effect="fadeInUp">
+                    {% include 'booking/booking_js.html' %}
+                </div>
 
-            <div class="col-md-4 mb-30 animate-box" data-animate-effect="fadeInUp">
-                <span>
-                    {% for i in "12345"|make_list %}
-                        {% if i <= about.rating %}
-                            <i class="star-rating"></i>
-                        {% else %}
-                            <i class="star-rating-empty"></i>
-                        {% endif %}
-                    {% endfor %}
-                </span>
-                <div class="section-subtitle">{{ about.subtitle }}</div>
-                <div class="section-title">{{ about.title }}</div>
-                <p>{{ about.description1 }}</p>
-                <p>{{ about.description2 }}</p>
-                <div class="reservations">
-                    <div class="icon"><span class="flaticon-call"></span></div>
-                    <div class="text">
-                        <p>Reservation</p> <a href="tel:{{ about.phone_number }}">{{ about.phone_number }}</a>
+                <!-- Right Column -->
+                <div class="md:col-span-4 animate-box space-y-4" data-animate-effect="fadeInUp">
+                    <div class="mt-6 w-full flex-1 lg:mt-0">
+                        <div></div>
+                        <img class=""
+                             src="https://images.unsplash.com/photo-1524749292158-7540c2494485?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1950&q=85"/>
                     </div>
                 </div>
             </div>

@@ -53,6 +53,11 @@ def send_user_confirmation_email(booking):
         <p><strong>Fare:</strong> EUR {booking.price}</p>
         <p><strong>Trip Type:</strong> {booking.trip_type}</p>
         <p><strong>Transport:</strong> {booking.transport_type}</p>
+        <p><strong>Pickup Address:</strong> EUR {booking.pickup_address}</p>
+        <p><strong>Dropoff Address:</strong> {booking.dropoff_address}</p>
+        <p><strong>Email:</strong> {booking.email}</p>
+        <p><strong>Flight Number:</strong> EUR {booking.flight_number}</p>
+        <p><strong>Check-in date:</strong> {booking.checkin_date}</p>
       </div>
     </body></html>
     """
@@ -66,6 +71,12 @@ def send_admin_emails(booking):
       <p><strong>Trip:</strong> {booking.trip_type} / {booking.transport_type}</p>
       <p><strong>Fare:</strong> EUR {booking.price}</p>
       <p><strong>Booked At:</strong> {booking.created_at}</p>
+      <p><strong>Fare:</strong> EUR {booking.price}</p>
+        <p><strong>Pickup Address:</strong>  {booking.pickup_location_1}</p>
+        <p><strong>Dropoff Address:</strong> {booking.dropoff_address}</p>
+        <p><strong>Email:</strong> {booking.email}</p>
+        <p><strong>Flight Number:</strong>  {booking.flight_number}</p>
+        <p><strong>Check-in date:</strong> {booking.checkin_date}</p>
     </body></html>
     """
     msg = EmailMultiAlternatives("🚨 New Booking Received", "Booking info",

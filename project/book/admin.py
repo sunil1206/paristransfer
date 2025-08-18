@@ -133,7 +133,78 @@ class TripLegInline(admin.TabularInline):
     autocomplete_fields = ("pickup_location", "dropoff_location")
     ordering = ("sequence",)
 
-
+#
+# @admin.register(Booking)
+# class BookingAdmin(admin.ModelAdmin):
+#     inlines = [TripLegInline]
+#
+#     list_display = (
+#         "id", "created_at",
+#         "first_name", "last_name",
+#         "trip_type", "transport_type",
+#         "pickup_location", "dropoff_location",
+#         "passenger_count",
+#         "price",
+#         "email", "phone",
+#     )
+#     list_filter = (
+#         "trip_type", "transport_type",
+#         ("pickup_location", admin.RelatedOnlyFieldListFilter),
+#         ("dropoff_location", admin.RelatedOnlyFieldListFilter),
+#         "created_at",
+#     )
+#     search_fields = (
+#         "first_name", "last_name",
+#         "email", "phone",
+#         "notes", "flight_number",
+#         "pickup_address", "dropoff_address",
+#     )
+#     ordering = ("-created_at",)
+#     readonly_fields = ("created_at", "price")
+#     autocomplete_fields = ("pickup_location", "dropoff_location")
+#
+#     fieldsets = (
+#         ("Trip Overview", {
+#             "fields": (
+#                 ("trip_type", "transport_type"),
+#                 ("pickup_location", "dropoff_location"),
+#                 ("pickup_time", "return_time"),
+#                 "summary_leg_preview",
+#             )
+#         }),
+#         ("Addresses (Outbound summary on Booking)", {
+#             "fields": ("pickup_address", "dropoff_address")
+#         }),
+#         ("Passenger & Extras", {
+#             "fields": (
+#                 ("adults", "children", "luggage"),
+#                 ("booster_seats", "flight_number"),
+#                 ("checkin_date", "checkout_date"),
+#             )
+#         }),
+#         ("Customer", {
+#             "fields": (
+#                 ("first_name", "last_name"),
+#                 ("email", "country_code", "phone"),
+#             )
+#         }),
+#         ("Pricing & Meta", {
+#             "fields": ("promo_code", "notes", "price", "created_at")
+#         }),
+#     )
+#
+#     def passenger_count(self, obj):
+#         return (obj.adults or 0) + (obj.children or 0)
+#     passenger_count.short_description = "Passengers"
+#
+#     def summary_leg_preview(self, obj):
+#         # Custom display: show first leg details (you can change as needed)
+#         legs = obj.tripleg_set.all().order_by("sequence")
+#         if legs.exists():
+#             first = legs.first()
+#             return f"{first.pickup_location} → {first.dropoff_location}"
+#         return "No legs"
+#     summary_leg_preview.short_description = "Trip Legs"
 @admin.register(Booking)
 class BookingAdmin(admin.ModelAdmin):
     inlines = [TripLegInline]
@@ -146,6 +217,7 @@ class BookingAdmin(admin.ModelAdmin):
         "passenger_count",
         "price",
         "email", "phone",
+        "summary_leg_preview",  # shows in list view too
     )
     list_filter = (
         "trip_type", "transport_type",
@@ -160,7 +232,7 @@ class BookingAdmin(admin.ModelAdmin):
         "pickup_address", "dropoff_address",
     )
     ordering = ("-created_at",)
-    readonly_fields = ("created_at", "price")
+    readonly_fields = ("created_at", "price", "summary_leg_preview")
     autocomplete_fields = ("pickup_location", "dropoff_location")
 
     fieldsets = (
@@ -198,10 +270,9 @@ class BookingAdmin(admin.ModelAdmin):
     passenger_count.short_description = "Passengers"
 
     def summary_leg_preview(self, obj):
-        return format_html(
-            "<div><b>Leg 1:</b> {} → {}<br>"
-            "<small>{} → {}</small></div>",
-            obj.pickup_location, obj.dropoff_location,
-            (obj.pickup_address or "—"), (obj.dropoff_address or "—"),
-        )
-    summary_leg_preview.short_description = "Summary (Outbound)"
+        # If TripLeg has related_name="legs"
+        legs = obj.legs.all().order_by("sequence")
+        if legs.exists():
+            return " / ".join([f"{leg.pickup_location} → {leg.dropoff_location}" for leg in legs])
+        return "No legs"
+

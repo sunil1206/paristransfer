@@ -2,290 +2,285 @@
 {% load static %}
 {% block content %}
 
-<div class="booking-hero" style="margin-top: 5%;">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-11 col-md-10 col-lg-12">
-                <div class="glass-card shadow-lg">
-                    <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-2">
-                        <div>
-                            <h2 class="page-title m-0">Book Your Transfer</h2>
-                            <p class="subtitle m-0">Fill all fields to move to the next step</p>
-                        </div>
-                        <div class="estimate-badge" id="estimateBadge">
-                            <span class="label">Estimated</span>
-                            <span class="value" id="priceDisplay">€00.00</span>
-                        </div>
-                    </div>
+<div class="">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-12 col-lg-11">
+        <div class="glass-card shadow-lg">
 
-                    {% if form.errors %}
-                    <div class="alert alert-danger mt-2 mb-3">
-                        <strong>Form Errors</strong>
-                        <ul class="mb-0 ps-3">
-                            {% for field in form %}
-                            {% for error in field.errors %}
-                            <li><strong>{{ field.label }}:</strong> {{ error }}</li>
-                            {% endfor %}
-                            {% endfor %}
-                            {% for error in form.non_field_errors %}
-                            <li>{{ error }}</li>
-                            {% endfor %}
-                        </ul>
-                    </div>
-                    {% endif %}
-
-                    <!-- FORM -->
-                    <!-- If you don't use a namespace, replace 'book:booking_quote' with 'booking_quote' -->
-                    <form id="msform" class="text-start" method="POST" action=""
-                          data-quote-url="{% url 'booking_quote' %}">
-                        {% csrf_token %}
-
-                        <!-- progressbar -->
-                        <ul id="progressbar" class="mb-3">
-                            <li class="active">
-    <i class="fa fa-road" aria-hidden="true"></i> <strong>Trip</strong>
-</li>
-<li>
-    <i class="fa fa-map-marker-alt" aria-hidden="true"></i> <strong>Addresses & Dates</strong>
-</li>
-<li>
-    <i class="fa fa-user-friends" aria-hidden="true"></i> <strong>Passengers & Contact</strong>
-</li>
-
-                        </ul>
-                        <div class="progress mb-4">
-                            <div class="progress-bar progress-bar-striped progress-bar-animated"
-                                 role="progressbar"></div>
-                        </div>
-
-                        <!-- ===================== STEP 1: TRIP ===================== -->
-                        <fieldset>
-                            <div class="form-card">
-                                <div class="d-flex align-items-center justify-content-between mb-3">
-                                    <h3 class="fs-title m-0">Trip Details</h3>
-                                    <span class="step-count">Step 1 / 3</span>
-                                </div>
-
-<div class="row">
-    <!-- Trip type -->
-    <div class="col-md-4 mb-3">
-        <label class="fieldlabels d-block mb-1">Trip Type *</label>
-        <div class="toggle-pills d-flex flex-wrap gap-2">
-            {% for radio in form.trip_type %}
-            <label class="pill">
-                {{ radio.tag }} <span>{{ radio.choice_label }}</span>
-            </label>
-            {% endfor %}
-        </div>
-    </div>
-
-    <!-- Transport type -->
-    <div class="col-md-4 mb-3">
-        <label class="fieldlabels d-block mb-1">Transport Type *</label>
-        <div class="toggle-pills d-flex flex-wrap gap-2">
-            {% for radio in form.transport_type %}
-            <label class="pill">
-                {{ radio.tag }}
-                <span class="d-flex align-items-center gap-2">
-                    {% if radio.choice_label == "Car" %}
-<!--                        <img src="{% static 'img/car.png' %}" alt="Car" width="24"> -->
-                    Car
-                    {% elif radio.choice_label == "Van" %}
-<!--                        <img src="{% static 'img/van.png' %}" alt="Van" width="24"> -->
-                    Van
-                    {% else %}
-                        {{ radio.choice_label }}
-                    {% endif %}
-                </span>
-            </label>
-            {% endfor %}
-        </div>
-    </div>
-
-    <!-- Passengers -->
-    <div class="col-md-4 mb-3">
-        <label class="fieldlabels d-block mb-1">Passengers *</label>
-        {{ form.passengers }}
-    </div>
-</div>
-
-                                <!-- Leg 1 -->
-                                <div class="row g-3" id="leg1">
-                                    <div class="col-md-6">
-                                        <label class="fieldlabels d-block mb-1">Pickup Location *</label>
-                                        {{ form.pickup_location_1 }}
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="fieldlabels d-block mb-1">Dropoff Location *</label>
-                                        {{ form.dropoff_location_1 }}
-                                    </div>
-                                </div>
-
-                                <!-- Leg 2 (Round Trip) -->
-                                <div class="row g-3 mt-1" id="leg2" style="display:none;">
-                                    <div class="col-md-6">
-                                        <label class="fieldlabels d-block mb-1">Return Pickup Location *</label>
-                                        {{ form.pickup_location_2 }}
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="fieldlabels d-block mb-1">Return Dropoff Location *</label>
-                                        {{ form.dropoff_location_2 }}
-                                    </div>
-                                </div>
-
-                                <!-- Times -->
-                                <div class="row g-3 mt-1">
-                                    <div class="col-md-6">
-                                        <label class="fieldlabels d-block mb-1">Pickup Time *</label>
-                                        {{ form.pickup_time }}
-                                    </div>
-                                    <div class="col-md-6" id="return_time_container" style="display:none;">
-                                        <label class="fieldlabels d-block mb-1">Return Time *</label>
-                                        {{ form.return_time }}
-                                    </div>
-                                </div>
-
-                                <div class="hint small mt-2" id="quoteHint">Select pickup & drop-off to get an
-                                    estimate.
-                                </div>
-                            </div>
-                            <div class="wizard-nav">
-                                <button type="button" name="next" class="next action-button">Next</button>
-                            </div>
-                        </fieldset>
-
-                        <!-- ===================== STEP 2: ADDRESSES & DATES ===================== -->
-                        <fieldset>
-                            <div class="form-card">
-                                <div class="d-flex align-items-center justify-content-between mb-3">
-                                    <h3 class="fs-title m-0">Addresses & Dates</h3>
-                                    <span class="step-count">Step 2 / 3</span>
-                                </div>
-
-                                <div class="row g-3">
-                                    <div class="col-md-6">
-                                        <label class="fieldlabels d-block mb-1">Pickup Address (optional)</label>
-                                        {{ form.pickup_address }}
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="fieldlabels d-block mb-1">Dropoff Address (optional)</label>
-                                        {{ form.dropoff_address }}
-                                    </div>
-                                </div>
-
-                                <div class="row g-3 mt-1">
-                                    <div class="col-md-4">
-                                        <label class="fieldlabels d-block mb-1">Check-in Date</label>
-                                        {{ form.checkin_date }}
-                                    </div>
-                                    <div class="col-md-4" id="checkout_date_container" style="display:none;">
-                                        <label class="fieldlabels d-block mb-1">Checkout Date (Round Trip)</label>
-                                        {{ form.checkout_date }}
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="fieldlabels d-block mb-1">Flight Number</label>
-                                        {{ form.flight_number }}
-                                    </div>
-                                </div>
-
-                                <div class="row g-3 mt-1">
-                                    <div class="col-md-6">
-                                        <label class="fieldlabels d-block mb-1">Booster Seats</label>
-                                        {{ form.booster_seats }}
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="fieldlabels d-block mb-1">Promo Code</label>
-                                        {{ form.promo_code }}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="wizard-nav">
-                                <button type="button" name="previous" class="previous action-button-previous">Previous
-                                </button>
-                                <button type="button" name="next" class="next action-button">Next</button>
-                            </div>
-                        </fieldset>
-
-                        <!-- ===================== STEP 3: PASSENGERS & CONTACT ===================== -->
-                        <fieldset>
-                            <div class="form-card">
-                                <div class="d-flex align-items-center justify-content-between mb-3">
-                                    <h3 class="fs-title m-0">Passengers & Contact</h3>
-                                    <span class="step-count">Step 3 / 3</span>
-                                </div>
-
-                                <div class="row g-3">
-                                    <div class="col-md-4">
-                                        <label class="fieldlabels d-block mb-1">Adults *</label>
-                                        {{ form.adults }}
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="fieldlabels d-block mb-1">Children</label>
-                                        {{ form.children }}
-                                    </div>
-                                    <div class="col-md-4">
-                                        <label class="fieldlabels d-block mb-1">Luggage</label>
-                                        {{ form.luggage }}
-                                    </div>
-                                </div>
-
-                                <div class="row g-3 mt-1">
-                                    <div class="col-md-6">
-                                        <label class="fieldlabels d-block mb-1">First Name *</label>
-                                        {{ form.first_name }}
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="fieldlabels d-block mb-1">Last Name *</label>
-                                        {{ form.last_name }}
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="fieldlabels d-block mb-1">Email *</label>
-                                        {{ form.email }}
-                                    </div>
-                                    <div class="col-md-6">
-    <label class="fieldlabels d-block mb-1">Phone *</label>
-    <div class="row g-2 align-items-center">
-        <div class="col-4">
-            <div class="form-floating">
-                {{ form.country_code }}
-                <label>Code</label>
+          <!-- Header -->
+          <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-2 mb-3">
+            <div>
+              <h2 class="page-title m-0">Book Your Transfer</h2>
+              <p class="subtitle m-0">Fill all fields to move to the next step</p>
             </div>
-        </div>
-        <div class="col-8">
-            <div class="form-floating">
-                {{ form.phone }}
-                <label>Number</label>
+            <div class="estimate-badge mt-2 mt-md-0 align-self-start align-self-md-center" id="estimateBadge">
+              <span class="label">Estimated</span>
+              <span class="value" id="priceDisplay">€00.00</span>
             </div>
-        </div>
-    </div>
-</div>
+          </div>
 
-                                </div>
+          <!-- Errors -->
+          {% if form.errors %}
+          <div class="alert alert-danger mt-2 mb-3">
+            <strong>Form Errors</strong>
+            <ul class="mb-0 ps-3">
+              {% for field in form %}
+              {% for error in field.errors %}
+              <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+              {% endfor %}
+              {% endfor %}
+              {% for error in form.non_field_errors %}
+              <li>{{ error }}</li>
+              {% endfor %}
+            </ul>
+          </div>
+          {% endif %}
 
-                                <div class="mt-2">
-                                    <label class="fieldlabels d-block mb-1">Notes</label>
-                                    {{ form.notes }}
-                                </div>
+          <!-- FORM -->
+          <form id="msform" class="text-start" method="POST" action="" data-quote-url="{% url 'booking_quote' %}">
+            {% csrf_token %}
 
-                                <div class="d-flex justify-content-between align-items-center mt-3">
-                                    <div class="estimate-badge small">
-                                        <span class="label">Estimated</span>
-                                        <span class="value" id="priceDisplayStep3">€0.00</span>
-                                    </div>
-                                    <button type="submit" class="action-button">Submit</button>
-                                </div>
-                            </div>
-                            <div class="wizard-nav">
-                                <button type="button" name="previous" class="previous action-button-previous">Previous
-                                </button>
-                            </div>
-                        </fieldset>
-                    </form>
+            <!-- Progress -->
+            <ul id="progressbar" class="flex-wrap mb-3">
+              <li class="active">
+                <i class="fa fa-road"></i> <strong>Trip</strong>
+              </li>
+              <li>
+                <i class="fa fa-map-marker-alt"></i> <strong>Addresses & Dates</strong>
+              </li>
+              <li>
+                <i class="fa fa-user-friends"></i> <strong>Passengers & Contact</strong>
+              </li>
+            </ul>
+            <div class="progress mb-4">
+              <div class="progress-bar progress-bar-striped progress-bar-animated"></div>
+            </div>
+
+            <!-- ================= STEP 1: TRIP ================= -->
+            <fieldset>
+              <div class="form-card">
+                <div class="d-flex flex-column flex-md-row justify-content-between mb-3">
+                  <h3 class="fs-title m-0">Trip Details</h3>
+                  <span class="step-count">Step 1 / 3</span>
                 </div>
+
+                <!-- Trip + Transport + Passengers -->
+                <div class="row g-3">
+                  <div class="col-12 col-md-4">
+                    <label class="fieldlabels d-block mb-1">Trip Type *</label>
+                    <div class="toggle-pills d-flex flex-wrap gap-2">
+                      {% for radio in form.trip_type %}
+                      <label class="pill">
+                        {{ radio.tag }} <span>{{ radio.choice_label }}</span>
+                      </label>
+                      {% endfor %}
+                    </div>
+                  </div>
+
+                  <div class="col-12 col-md-4">
+                    <label class="fieldlabels d-block mb-1">Transport Type *</label>
+                    <div class="toggle-pills d-flex flex-wrap gap-2">
+                      {% for radio in form.transport_type %}
+                      <label class="pill">
+                        {{ radio.tag }}
+                        <span>{{ radio.choice_label }}</span>
+                      </label>
+                      {% endfor %}
+                    </div>
+                  </div>
+
+                  <div class="col-12 col-md-4">
+                    <label class="fieldlabels d-block mb-1">Passengers *</label>
+                    {{ form.passengers }}
+                  </div>
+                </div>
+
+                <!-- Locations -->
+                <div class="row g-3 mt-2" id="leg1">
+                  <div class="col-12 col-md-6">
+                    <label class="fieldlabels d-block mb-1">Pickup Location *</label>
+                    {{ form.pickup_location_1 }}
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <label class="fieldlabels d-block mb-1">Dropoff Location *</label>
+                    {{ form.dropoff_location_1 }}
+                  </div>
+                </div>
+
+                <!-- Round Trip -->
+                <div class="row g-3 mt-2" id="leg2" style="display:none;">
+                  <div class="col-12 col-md-6">
+                    <label class="fieldlabels d-block mb-1">Return Pickup Location *</label>
+                    {{ form.pickup_location_2 }}
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <label class="fieldlabels d-block mb-1">Return Dropoff Location *</label>
+                    {{ form.dropoff_location_2 }}
+                  </div>
+                </div>
+
+                <!-- Times -->
+                <div class="row g-3 mt-2">
+                  <div class="col-12 col-md-6">
+                    <label class="fieldlabels d-block mb-1">Pickup Time *</label>
+                    {{ form.pickup_time }}
+                  </div>
+                  <div class="col-12 col-md-6" id="return_time_container" style="display:none;">
+                    <label class="fieldlabels d-block mb-1">Return Time *</label>
+                    {{ form.return_time }}
+                  </div>
+                </div>
+
+                <div class="hint small mt-2" id="quoteHint">Select pickup & drop-off to get an estimate.</div>
+              </div>
+              <div class="wizard-nav">
+                <div class="estimate-badge mt-2 mt-md-0 align-self-start align-self-md-center" id="estimateBadge">
+              <span class="label">Estimated</span>
+              <span class="value" id="priceDisplay">€00.00</span>
             </div>
+                <button type="button" name="next" class="next action-button">Next</button>
+              </div>
+            </fieldset>
+
+            <!-- ================= STEP 2: ADDRESSES & DATES ================= -->
+            <fieldset>
+              <div class="form-card">
+                <div class="d-flex flex-column flex-md-row justify-content-between mb-3">
+                  <h3 class="fs-title m-0">Addresses & Dates</h3>
+                  <span class="step-count">Step 2 / 3</span>
+                </div>
+
+                <div class="row g-3">
+                  <div class="col-12 col-md-6">
+                    <label class="fieldlabels d-block mb-1">Pickup Address (optional)</label>
+                    {{ form.pickup_address }}
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <label class="fieldlabels d-block mb-1">Dropoff Address (optional)</label>
+                    {{ form.dropoff_address }}
+                  </div>
+                </div>
+
+                <div class="row g-3 mt-2">
+                  <div class="col-12 col-md-4">
+                    <label class="fieldlabels d-block mb-1">Check-in Date</label>
+                    {{ form.checkin_date }}
+                  </div>
+                  <div class="col-12 col-md-4" id="checkout_date_container" style="display:none;">
+                    <label class="fieldlabels d-block mb-1">Checkout Date (Round Trip)</label>
+                    {{ form.checkout_date }}
+                  </div>
+                  <div class="col-12 col-md-4">
+                    <label class="fieldlabels d-block mb-1">Flight Number</label>
+                    {{ form.flight_number }}
+                  </div>
+                </div>
+
+                <div class="row g-3 mt-2">
+                  <div class="col-12 col-md-6">
+                    <label class="fieldlabels d-block mb-1">Booster Seats</label>
+                    {{ form.booster_seats }}
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <label class="fieldlabels d-block mb-1">Promo Code</label>
+                    {{ form.promo_code }}
+                  </div>
+                </div>
+              </div>
+              <div class="wizard-nav">
+                <div class="estimate-badge mt-2 mt-md-0 align-self-start align-self-md-center" id="estimateBadge">
+              <span class="label">Estimated</span>
+              <span class="value" id="priceDisplay">€00.00</span>
+            </div>
+
+                <button type="button" name="previous" class="previous action-button-previous">Previous</button>
+                <button type="button" name="next" class="next action-button">Next</button>
+              </div>
+            </fieldset>
+
+            <!-- ================= STEP 3: PASSENGERS & CONTACT ================= -->
+            <fieldset>
+              <div class="form-card">
+                <div class="d-flex flex-column flex-md-row justify-content-between mb-3">
+                  <h3 class="fs-title m-0">Passengers & Contact</h3>
+                  <span class="step-count">Step 3 / 3</span>
+                </div>
+
+                <div class="row g-3">
+                  <div class="col-12 col-md-4">
+                    <label class="fieldlabels d-block mb-1">Adults *</label>
+                    {{ form.adults }}
+                  </div>
+                  <div class="col-12 col-md-4">
+                    <label class="fieldlabels d-block mb-1">Children</label>
+                    {{ form.children }}
+                  </div>
+                  <div class="col-12 col-md-4">
+                    <label class="fieldlabels d-block mb-1">Luggage</label>
+                    {{ form.luggage }}
+                  </div>
+                </div>
+
+                <div class="row g-3 mt-2">
+                  <div class="col-12 col-md-6">
+                    <label class="fieldlabels d-block mb-1">First Name *</label>
+                    {{ form.first_name }}
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <label class="fieldlabels d-block mb-1">Last Name *</label>
+                    {{ form.last_name }}
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <label class="fieldlabels d-block mb-1">Email *</label>
+                    {{ form.email }}
+                  </div>
+                  <div class="col-12 col-md-6">
+                    <label class="fieldlabels d-block mb-1">Phone *</label>
+                    <div class="row g-2 align-items-center">
+                      <div class="col-4">
+                        <div class="form-floating">
+                          {{ form.country_code }}
+                          <label>Code</label>
+                        </div>
+                      </div>
+                      <div class="col-8">
+                        <div class="form-floating">
+                          {{ form.phone }}
+                          <label>Number</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="mt-2">
+                  <label class="fieldlabels d-block mb-1">Notes</label>
+                  {{ form.notes }}
+                </div>
+
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mt-3 gap-2">
+                  <div class="estimate-badge small">
+                    <span class="label">Estimated</span>
+                    <span class="value" id="priceDisplayStep3">€0.00</span>
+                  </div>
+                  <button type="submit" class="action-button">Submit</button>
+                </div>
+              </div>
+              <div class="wizard-nav">
+                <button type="button" name="previous" class="previous action-button-previous">Previous</button>
+              </div>
+            </fieldset>
+          </form>
         </div>
+      </div>
     </div>
+  </div>
 </div>
+
+<!-- keep your CSS + JS as in your original, they still work fine -->
+
+
 
 <!-- ===================== STYLES ===================== -->
 <style>
@@ -338,6 +333,7 @@
 .rounded-start{ border-radius:.5rem 0 0 .5rem !important }
 
 
+
 </style>
 
 <!-- ===================== JS: Wizard ===================== -->
@@ -358,6 +354,7 @@
   });
   show(0);
 })();
+
 
 
 </script>
@@ -402,6 +399,7 @@
   form.addEventListener("change", (e)=>{ if(e.target.name==="trip_type") toggleRT(); });
   toggleRT();
 })();
+
 
 
 </script>
@@ -501,6 +499,7 @@
 })();
 
 
+
 </script>
 
 <!-- ===================== Google Places (optional) ===================== -->
@@ -514,6 +513,7 @@
       }
     });
   }
+
 
 
 </script>
@@ -549,6 +549,7 @@
   // expose ensureDefaults to the other script that calls it
   window.__ensureDefaults = ensureDefaults;
 })();
+
 
 
 </script>

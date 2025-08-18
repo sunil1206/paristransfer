@@ -5,7 +5,7 @@ from django.conf import settings
 from django.contrib import messages
 # Create your views here.
 from book.views import _price_for_legs, send_user_confirmation_email, send_admin_emails, logger
-from booking.views import load_model, get_float_value
+
 from core.models import Slider, About, Cab, Amenity, Service, FAQ, Blog
 from seo.models import SEOSettings
 from django.utils import timezone
@@ -19,48 +19,64 @@ from book.models import (
     TripLeg, PricingRule, find_matrix_price,
 )
 
+# app/views.py
+from django.shortcuts import render, get_object_or_404
+from django.utils import timezone
+from django.contrib import messages
+from django.conf import settings
+
+from book.forms import BookingForm
+from book.models import TripLeg
+from book.views import _price_for_legs, send_user_confirmation_email, send_admin_emails, logger
+
+from core.models import Slider, About, Cab, Amenity, Service, FAQ, Blog
+from seo.models import SEOSettings
+
+# app/views.py (inside same file as booking_view)
+
 def index(request):
-    """
-    Homepage: renders hero/sections + booking form.
-    On POST, processes a booking (same as booking_view) and shows success page.
-    """
     canonical_url = request.build_absolute_uri()
 
-    # SEO + sections
+    # SEO + homepage sections
     try:
-        seo_settings = SEOSettings.objects.get(title='Home')
+        seo_settings = SEOSettings.objects.get(title="Home")
     except SEOSettings.DoesNotExist:
         seo_settings = None
 
-    slider_items = Slider.objects.filter(is_active=True).order_by('order')
+    slider_items = Slider.objects.filter(is_active=True).order_by("order")
     about = About.objects.first()
-    cabs = Cab.objects.prefetch_related('amenities').all()
+    cabs = Cab.objects.prefetch_related("amenities").all()
     amenity = Amenity.objects.all()
     services = Service.objects.all()
     faqs = FAQ.objects.all()
-    blogs = Blog.objects.order_by('-date')
+    blogs = Blog.objects.order_by("-date")
 
-    # Booking form on homepage
+    # Booking form
     form = BookingForm(request.POST or None)
 
     if request.method == "POST":
-        try:
-            if form.is_valid():
+        if form.is_valid():
+            try:
                 cd = form.cleaned_data
-                # Leg 1
-                p1, d1 = cd["pickup_location_1"], cd["dropoff_location_1"]
-                pa1, da1 = cd.get("pickup_address_1", ""), cd.get("dropoff_address_1", "")
-                # Leg 2 (optional)
-                p2, d2 = cd.get("pickup_location_2"), cd.get("dropoff_location_2")
-                pa2, da2 = cd.get("pickup_address_2", ""), cd.get("dropoff_address_2", "")
 
-                # If round trip and leg2 omitted, auto reverse (addresses reversed too)
+                # --- Leg 1 ---
+                p1, d1 = cd["pickup_location_1"], cd["dropoff_location_1"]
+                pa1 = cd.get("pickup_address_1") or cd.get("pickup_address") or ""
+                da1 = cd.get("dropoff_address_1") or cd.get("dropoff_address") or ""
+
+                # --- Leg 2 (optional) ---
+                p2, d2 = cd.get("pickup_location_2"), cd.get("dropoff_location_2")
+                pa2 = cd.get("pickup_address_2") or ""
+                da2 = cd.get("dropoff_address_2") or ""
+
+                # Auto-reverse if round trip & no return leg given
                 if cd.get("trip_type") == "Round Trip" and (not p2 or not d2):
                     p2, d2 = d1, p1
                     pa2, da2 = da1, pa1
 
                 pax = _pax(cd.get("passengers") or 1)
 
+                # Legs for price calculation
                 legs = [{"p": p1.id, "d": d1.id}]
                 if cd.get("trip_type") == "Round Trip":
                     legs.append({"p": p2.id, "d": d2.id})
@@ -71,9 +87,10 @@ def index(request):
                     legs=legs,
                     pickup_time=cd.get("pickup_time"),
                     return_time=cd.get("return_time"),
-                    pax=pax
+                    pax=pax,
                 )
 
+                # Save booking summary
                 booking = form.save(commit=False)
                 booking.created_at = timezone.now()
                 booking.pickup_location = p1
@@ -89,29 +106,46 @@ def index(request):
                 TripLeg.objects.create(
                     booking=booking, sequence=1,
                     pickup_location=p1, dropoff_location=d1,
-                    pickup_address=pa1, dropoff_address=da1
+                    pickup_address=pa1, dropoff_address=da1,
                 )
                 if cd.get("trip_type") == "Round Trip":
                     TripLeg.objects.create(
                         booking=booking, sequence=2,
                         pickup_location=p2, dropoff_location=d2,
-                        pickup_address=pa2, dropoff_address=da2
+                        pickup_address=pa2, dropoff_address=da2,
                     )
 
-                # Recalculate for safety (promo/night, etc.)
+                # Recalculate safely (applies promo/night logic again)
                 booking.calculate_total_price(passengers_override=pax)
 
                 # Emails
                 send_user_confirmation_email(booking)
                 send_admin_emails(booking)
 
-                return render(request, "booking/booking_success.html", {"booking": booking})
-            else:
-                messages.error(request, "Please fix the errors in the form.")
-                logger.warning(f"Form errors on index: {form.errors}")
-        except Exception as e:
-            logger.error(f"Error during booking on index: {e}", exc_info=True)
-            messages.error(request, "Something went wrong while processing your booking.")
+                messages.success(request, "Your booking has been confirmed!")
+                return render(request, "core/index.html", {
+                    **{
+                        "canonical_url": canonical_url,
+                        "seo_settings": seo_settings,
+                        "slider_items": slider_items,
+                        "about": about,
+                        "cabs": cabs,
+                        "amenity": amenity,
+                        "services": services,
+                        "faqs": faqs,
+                        "blogs": blogs,
+                        "GOOGLE_MAPS_API_KEY": getattr(settings, "GOOGLE_MAPS_API_KEY", ""),
+                    },
+                    "form": BookingForm(),  # reset form
+                    "booking": booking,
+                })
+
+            except Exception as e:
+                logger.error(f"Error during booking on index: {e}", exc_info=True)
+                messages.error(request, "Something went wrong while processing your booking.")
+        else:
+            messages.error(request, "Please fix the errors in the form.")
+            logger.warning(f"Form errors on index: {form.errors}")
 
     context = {
         "canonical_url": canonical_url,
@@ -127,6 +161,116 @@ def index(request):
         "GOOGLE_MAPS_API_KEY": getattr(settings, "GOOGLE_MAPS_API_KEY", ""),
     }
     return render(request, "core/index.html", context)
+
+# def index(request):
+#     canonical_url = request.build_absolute_uri()
+#
+#     # SEO + sections
+#     try:
+#         seo_settings = SEOSettings.objects.get(title='Home')
+#     except SEOSettings.DoesNotExist:
+#         seo_settings = None
+#
+#     slider_items = Slider.objects.filter(is_active=True).order_by('order')
+#     about = About.objects.first()
+#     cabs = Cab.objects.prefetch_related('amenities').all()
+#     amenity = Amenity.objects.all()
+#     services = Service.objects.all()
+#     faqs = FAQ.objects.all()
+#     blogs = Blog.objects.order_by('-date')
+#
+#     # Booking form on homepage
+#     form = BookingForm(request.POST or None)
+#
+#     if request.method == "POST":
+#         if form.is_valid():
+#             try:
+#                 cd = form.cleaned_data
+#
+#                 # Leg 1
+#                 p1, d1 = cd["pickup_location_1"], cd["dropoff_location_1"]
+#                 pa1, da1 = cd.get("pickup_address_1", ""), cd.get("dropoff_address_1", "")
+#
+#                 # Leg 2 (optional / round trip)
+#                 p2, d2 = cd.get("pickup_location_2"), cd.get("dropoff_location_2")
+#                 pa2, da2 = cd.get("pickup_address_2", ""), cd.get("dropoff_address_2", "")
+#
+#                 if cd.get("trip_type") == "Round Trip" and (not p2 or not d2):
+#                     p2, d2 = d1, p1
+#                     pa2, da2 = da1, pa1
+#
+#                 pax = cd.get("passengers") or 1
+#
+#                 # Price calculation
+#                 legs = [{"p": p1.id, "d": d1.id}]
+#                 if cd.get("trip_type") == "Round Trip":
+#                     legs.append({"p": p2.id, "d": d2.id})
+#
+#                 price = _price_for_legs(
+#                     trip_type=cd.get("trip_type"),
+#                     transport_type=cd.get("transport_type"),
+#                     legs=legs,
+#                     pickup_time=cd.get("pickup_time"),
+#                     return_time=cd.get("return_time"),
+#                     pax=pax
+#                 )
+#
+#                 # Save booking
+#                 booking = form.save(commit=False)
+#                 booking.created_at = timezone.now()
+#                 booking.pickup_location = p1
+#                 booking.dropoff_location = d1
+#                 booking.pickup_address = pa1
+#                 booking.dropoff_address = da1
+#                 booking.price = price
+#                 booking.save()
+#                 if hasattr(form, "save_m2m"):
+#                     form.save_m2m()
+#
+#                 # Save trip legs
+#                 TripLeg.objects.create(
+#                     booking=booking, sequence=1,
+#                     pickup_location=p1, dropoff_location=d1,
+#                     pickup_address=pa1, dropoff_address=da1
+#                 )
+#                 if cd.get("trip_type") == "Round Trip":
+#                     TripLeg.objects.create(
+#                         booking=booking, sequence=2,
+#                         pickup_location=p2, dropoff_location=d2,
+#                         pickup_address=pa2, dropoff_address=da2
+#                     )
+#
+#                 # Recalculate total price (promo/night logic)
+#                 booking.calculate_total_price(passengers_override=pax)
+#
+#                 # Send emails
+#                 send_user_confirmation_email(booking)
+#                 send_admin_emails(booking)
+#
+#                 return render(request, "core/index.html", {"booking": booking})
+#
+#             except Exception as e:
+#                 logger.error(f"Error during booking on index: {e}", exc_info=True)
+#                 messages.error(request, "Something went wrong while processing your booking.")
+#         else:
+#             messages.error(request, "Please fix the errors in the form.")
+#             logger.warning(f"Form errors on index: {form.errors}")
+#
+#     context = {
+#         "canonical_url": canonical_url,
+#         "seo_settings": seo_settings,
+#         "slider_items": slider_items,
+#         "about": about,
+#         "cabs": cabs,
+#         "amenity": amenity,
+#         "services": services,
+#         "faqs": faqs,
+#         "blogs": blogs,
+#         "form": form,
+#         "GOOGLE_MAPS_API_KEY": getattr(settings, "GOOGLE_MAPS_API_KEY", ""),
+#     }
+#     return render(request, "core/index.html", context)
+
 
 
 # def index(request):
