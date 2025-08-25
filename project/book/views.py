@@ -45,7 +45,7 @@ def _price_for_legs(trip_type, transport_type, legs, pickup_time, return_time, p
 def send_user_confirmation_email(booking):
     subject = "Booking Confirmation – Your Ride is Booked!"
     plain = f"Dear {booking.first_name}, your booking is confirmed. Fare: EUR {booking.price}."
-    html = f"""
+    html = f""" 
     <html><body style="font-family: Arial; background:#f4f4f4; padding:20px;">
       <div style="max-width:600px;background:#fff;padding:30px;border-radius:10px;">
         <h2 style="color:#4CAF50;">🚖 Booking Confirmed</h2>

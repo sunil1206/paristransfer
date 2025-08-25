@@ -180,3 +180,12 @@ EMAIL_HOST_USER ='samuel.fr125@gmail.com'
 EMAIL_HOST_PASSWORD = 'qdgqpgyozrdrsiuu'
 
 # zexazsyvetsnozht
+
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+ADMIN_EMAILS = ["sunilma94@gmail.com", ]
+
+# Use console backend in DEBUG mode
+if os.getenv("DJANGO_ENV") == "development":   # or simply `if DEBUG:`
+    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+    DEFAULT_FROM_EMAIL = "sunilma94@gmail.com"
+    ADMIN_EMAILS = [""]

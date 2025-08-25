@@ -1,155 +1,46 @@
-<html>
-<head>
-    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
-    <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
-    <style>
-      body {
-        font-family: 'Inter', sans-serif;
-      }
+<!--
+      *** MAIN CONTENT WRAPPER ***
+      - `pt-20` is added to offset the content from the fixed header.
+    -->
+    <main class="relative z-10 min-h-screen flex items-center pt-20">
+        <div class="container mx-auto px-6 py-16 lg:px-8">
+            {% for slide in slider_items %}
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
 
-    </style>
-
-    <!-- alpine.js is used for handling toggle of navbar on mobile screens, switch it with your own front end framework
-    if needed -->
-    <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.js" defer></script>
-</head>
-
-<body>
-<div class="">
-
-    <header class="px-5 sm:px-10 md:px-10 md:py-5 lg:px-20 flex items-center justify-between" style="margin-top: 4rem;">
-    </header>
-
-    <main>
-         {% for slide in slider_items %}
-        <div id="hero" class="pt-5 lg:flex items-center">
-            <div class="px-5 sm:px-10 md:px-10 md:flex lg:block lg:w-1/2 lg:max-w-3xl lg:mr-8 lg:px-20">
-                <div class="md:w-1/2 md:mr-10 lg:w-full lg:mr-0">
-                    <h1 class="text-3xl xl:text-4xl font-black md:leading-none xl:leading-tight">
+                <!-- Left Column: Text Content -->
+                <div class="text-center lg:text-left animate-float-in" style="animation-delay: 200ms;">
+                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-black text-[#123532] mb-4 leading-tight">
                         {{ slide.title }}
+                        <span class="bg-clip-text text-transparent bg-gradient-to-r from-amber-500 to-orange-500">
+                            effortlessly.
+                        </span>
                     </h1>
-                    <p class="mt-4 xl:mt-2">
-                     {{ slide.subtitle }}
+                    <p class="text-lg md:text-xl text-gray-600 mb-8 max-w-lg mx-auto lg:mx-0">
+                        {{ slide.subtitle }}
                     </p>
-                </div>
-
-                <div class="flex-1">
-                    <div class="relative mt-4 md:mt-0 lg:mt-4">
-                        <div class="pl-4 pr-4 h-full absolute bottom-0 left-0 flex items-center">
-
+                    <div class="flex flex-col sm:flex-row justify-center lg:justify-start gap-4">
+                        <a class="inline-block bg-[#F7BA41] hover:bg-yellow-500 text-[#272218] font-semibold px-8 py-3 rounded-lg text-base transition-transform hover:scale-105" href="{% url 'booking' %}">For Booking</a>
+                            <a class="inline-block bg-white hover:bg-gray-100 text-[#074A4D] font-semibold border border-[#074A4D] px-8 py-3 rounded-lg text-base transition-transform hover:scale-105" href="#budget">Calculate your budget</a>
+                    </div>
+                    <!-- Social Proof -->
+                    <div class="flex items-center justify-center lg:justify-start mt-8 text-gray-500">
+                        <div class="flex -space-x-2 mr-3">
+                            <img class="inline-block h-8 w-8 rounded-full ring-2 ring-white" src="https://placehold.co/40x40/FFC107/FFFFFF?text=A" alt="User A">
+                            <img class="inline-block h-8 w-8 rounded-full ring-2 ring-white" src="https://placehold.co/40x40/4CAF50/FFFFFF?text=B" alt="User B">
+                            <img class="inline-block h-8 w-8 rounded-full ring-2 ring-white" src="https://placehold.co/40x40/2196F3/FFFFFF?text=C" alt="User C">
                         </div>
-
-                    </div>
-                    <div class="relative mt-4">
-
-
-                    </div>
-                    <div>
-                        <button class="transition-all duration-300 mt-5 w-full border border-transparent rounded font-semibold tracking-wide text-sm px-5 py-4 focus:outline-none focus:shadow-outline bg-indigo-500 text-gray-100 hover:bg-indigo-600 hover:text-gray-200">
-                            <a href="{% url 'booking' %}"></a> Booking
-                        </button>
+                        <span class="text-sm font-medium">Trusted by 1,000+ customers</span>
                     </div>
                 </div>
+
+                <!-- Right Column: Image -->
+                <div class="flex justify-center animate-float-in" style="animation-delay: 400ms;">
+                    <img class="rounded-2xl w-full max-w-md h-auto shadow-2xl transition-transform duration-300 hover:scale-105"
+                         src="{{ slide.image.url }}"
+                         alt="Modern home with solar panels"/>
+                </div>
+
             </div>
-            <div class="mt-6 w-full flex-1 lg:mt-0">
-                <div></div>
-                <img class=""
-                     src="{{ slide.image.url }}"/>
-            </div>
+            {% endfor %}
         </div>
-
-
-
-
-<!--        <div class="px-5 sm:px-10 md:px-20 lg:px-10 xl:px-20 py-8 bg-indigo-100" id="blog-posts">-->
-<!--            <div class="max-w-screen-xl mx-auto">-->
-<!--                <div class="xl:flex">-->
-<!--                    <div>-->
-<!--                        <h3 class="leading-none font-black text-3xl">Popular Posts</h3>-->
-<!--                        <div class="flex flex-col items-center lg:flex-row lg:items-stretch lg:justify-around">-->
-<!--                            <a href="https://owaiskhan.me" class="flex w-full max-w-sm mt-6 lg:mt-8 xl:mr-8">-->
-<!--                                <div class="transition-all duration-300 cursor-pointer w-full shadow-lg hover:shadow-xl rounded-lg bg-gray-100 relative">-->
-<!--                                    <div class="w-full h-48 bg-cover rounded-t-lg" style='background-image:-->
-<!--                      url("https://images.unsplash.com/3/doctype-hi-res.jpg?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=768&q=80");'></div>-->
-<!--                                    <div class="p-6">-->
-<!--                                        <div class="text-lg font-bold">Tips for creating an amazing design system</div>-->
-<!--                                        <div class="mt-2 text-gray-900 text-sm">-->
-<!--                                            Learn how to create a new design system that is beautiful and efficient for-->
-<!--                                            creating your UI-->
-<!--                                            components.-->
-<!--                                        </div>-->
-<!--                                    </div>-->
-<!--                                </div>-->
-<!--                            </a>-->
-
-<!--                            <a href="https://timerse.com" class="flex w-full max-w-sm mt-6 lg:mt-8 xl:mr-8">-->
-<!--                                <div class="transition-all duration-300 cursor-pointer w-full shadow-lg hover:shadow-xl rounded-lg bg-gray-100 relative">-->
-<!--                                    <div class="w-full h-48 bg-cover rounded-t-lg" style='background-image:-->
-<!--                      url("https://images.unsplash.com/photo-1572044162444-ad60f128bdea?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=768&q=80");'></div>-->
-<!--                                    <div class="p-6">-->
-<!--                                        <div class="text-lg font-bold">Using a drawing tablet to create beautiful-->
-<!--                                            icons-->
-<!--                                        </div>-->
-<!--                                        <div class="mt-2 text-gray-900 text-sm">-->
-<!--                                            Good Icons are hard to come by. This article guides you on how to create-->
-<!--                                            beautiful sketched-->
-<!--                                            icons using a drawing pad.-->
-<!--                                        </div>-->
-<!--                                    </div>-->
-<!--                                </div>-->
-<!--                            </a>-->
-<!--                        </div>-->
-<!--                    </div>-->
-
-<!--                    <div class="mt-12 xl:mt-0 xl:ml-8">-->
-<!--                        <h3 class="leading-none font-black text-3xl">Recent Posts</h3>-->
-<!--                        <div class="flex flex-col items-center lg:flex-row lg:items-stretch lg:justify-around xl:flex-col">-->
-<!--                            <a href="https://owaiskhan.me" class="flex w-full max-w-sm mt-6 lg:mt-8">-->
-<!--                                <div class="transition-all duration-300 cursor-pointer w-full shadow-lg hover:shadow-xl rounded-lg-->
-<!--                    bg-gray-100 relative xl:flex xl:flex-row-reverse xl:items-center xl:px-6 xl:py-8">-->
-<!--                                    <div class="w-full h-48 bg-cover rounded-t-lg xl:w-32 xl:h-20 xl:rounded-lg xl:ml-2"-->
-<!--                                         style='background-image:-->
-<!--                      url("https://images.unsplash.com/photo-1452830978618-d6feae7d0ffa?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=512&q=80");'></div>-->
-<!--                                    <div class="p-6 xl:p-0">-->
-<!--                                        <div class="text-lg font-bold">How to work effectively with freelancers</div>-->
-<!--                                        <div class="mt-2 text-gray-900 text-sm xl:hidden">-->
-<!--                                            Hiring a freelancer for your new project can be challenging if you've never-->
-<!--                                            done before. Learn-->
-<!--                                            some tips that will allow you to have a better experience working with-->
-<!--                                            freelancers-->
-<!--                                        </div>-->
-<!--                                    </div>-->
-<!--                                </div>-->
-<!--                            </a>-->
-
-<!--                            <a href="https://owaiskhan.me" class="flex w-full max-w-sm mt-6 lg:mt-8">-->
-<!--                                <div class="transition-all duration-300 cursor-pointer w-full shadow-lg hover:shadow-xl rounded-lg-->
-<!--                    bg-gray-100 relative xl:flex xl:flex-row-reverse xl:items-center xl:px-6 xl:py-8">-->
-<!--                                    <div class="w-full h-48 bg-cover rounded-t-lg xl:w-32 xl:h-20 xl:rounded-lg xl:ml-2"-->
-<!--                                         style='background-image:-->
-<!--                      url("https://images.unsplash.com/photo-1581287053822-fd7bf4f4bfec?ixlib=rb-1.2.1&auto=format&fit=crop&w=512&q=80");'></div>-->
-<!--                                    <div class="p-6 xl:p-0">-->
-<!--                                        <div class="text-lg font-bold">How to create smooth React Native animations-->
-<!--                                        </div>-->
-<!--                                        <div class="mt-2 text-gray-900 text-sm xl:hidden">-->
-<!--                                            Animations play a vital role in user experience. This article describes how-->
-<!--                                            you can create-->
-<!--                                            butter smooth 60 FPS animations easily.-->
-<!--                                        </div>-->
-<!--                                    </div>-->
-<!--                                </div>-->
-<!--                            </a>-->
-
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                </div>-->
-<!--            </div>-->
-<!--        </div>-->
     </main>
-    {% endfor %}
-
-</div>
-</body>
-</html>
-
