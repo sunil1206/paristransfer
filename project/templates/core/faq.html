@@ -1,28 +1,60 @@
 {% load static %}
 
-<section class="section-padding bg-cream">
-    <div class="container">
-         <div class="row">
-                <div class="col-md-12">
-                    <div class="section-subtitle">FAQ</div>
-                    <div class="section-title">FAQ</div>
-                </div>
-            </div>
-        <div class="row">
-            <div class="col-md-12">
-                <ul class="accordion-box clearfix">
-                    {% for faq in faqs %}
-                        <li class="accordion block">
-                            <div class="acc-btn">{{ faq.question }}</div>
-                            <div class="acc-content">
-                                <div class="content">
-                                    <div class="text">{{ faq.answer }}</div>
-                                </div>
+<!--
+  HEAD Section:
+  This includes the necessary CDN links for Tailwind CSS (for styling) and Alpine.js (for interactivity).
+  These should ideally be in your base template's <head> tag.
+-->
+<head>
+    <style>
+        /* A simple transition for the accordion panel */
+        [x-cloak] { display: none !important; }
+    </style>
+</head>
+
+
+<section class="section-padding bg-gray-50 py-16 sm:py-24">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Section Header -->
+        <div class="text-center mb-12">
+            <h2 class="text-base font-semibold text-blue-600 tracking-wider uppercase">FAQ</h2>
+            <p class="mt-2 text-3xl lg:text-4xl font-extrabold text-gray-900 tracking-tight">
+                Frequently Asked Questions
+            </p>
+        </div>
+
+        <!--
+          Accordion Container
+          - `x-data="{ openFaq: 1 }"` initializes Alpine.js. 'openFaq' will store the ID of the currently open item.
+          - We set it to 1 initially to have the first FAQ open by default. Set to `null` to have all closed.
+        -->
+        <div x-data="{ openFaq: 1 }" class="max-w-3xl mx-auto bg-white rounded-2xl shadow-lg p-4">
+            <ul class="accordion-box">
+                {% for faq in faqs %}
+                    <li x-data="{ faqId: {{ forloop.counter }} }" class="accordion block border-b last:border-b-0 border-gray-200">
+                        <!-- Accordion Button -->
+                        <button @click="openFaq = (openFaq === faqId) ? null : faqId"
+                                class="acc-btn w-full flex justify-between items-center text-left text-gray-800 py-5 px-4 focus:outline-none">
+                            <span class="text-lg font-medium">{{ faq.question }}</span>
+                            <!-- Animated Icon -->
+                            <span class="text-blue-500 transition-transform duration-300"
+                                  :class="{ 'rotate-180': openFaq === faqId }">
+                                <i class="fas fa-chevron-down"></i>
+                            </span>
+                        </button>
+
+                        <!--
+                          Accordion Content
+                          - `x-collapse` now works because the plugin is loaded.
+                        -->
+                        <div x-show="openFaq === faqId" x-collapse x-cloak class="acc-content">
+                            <div class="content px-4 pb-5">
+                                <div class="text text-gray-600 leading-relaxed">{{ faq.answer|linebreaksbr }}</div>
                             </div>
-                        </li>
-                    {% endfor %}
-                </ul>
-            </div>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
         </div>
     </div>
 </section>

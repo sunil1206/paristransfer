@@ -4,7 +4,7 @@ import logging
 from django.conf import settings
 from django.contrib import messages
 # Create your views here.
-from book.views import _price_for_legs, send_user_confirmation_email, send_admin_emails, logger
+from book.views import send_user_confirmation_email, send_admin_emails, logger
 
 from core.models import Slider, About, Cab, Amenity, Service, FAQ, Blog
 from seo.models import SEOSettings
@@ -27,7 +27,7 @@ from django.conf import settings
 
 from book.forms import BookingForm
 from book.models import TripLeg
-from book.views import _price_for_legs, send_user_confirmation_email, send_admin_emails, logger
+from book.views import send_user_confirmation_email, send_admin_emails, logger
 
 from core.models import Slider, About, Cab, Amenity, Service, FAQ, Blog
 from seo.models import SEOSettings

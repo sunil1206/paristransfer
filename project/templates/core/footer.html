@@ -1,49 +1,50 @@
-
+{% load static %}
 
     <!-- Pied de page -->
     <footer id="footer">
         <div class="container">
             <div class="footer-grid">
                 <!-- Colonne 1 - À propos -->
+                <!-- Column 1: About & Logo -->
                 <div class="footer-column">
-                    <h3>Harmonie</h3>
-                    <p>Notre mission est d'apporter paix et sérénité dans votre vie quotidienne grâce à des solutions de
-                        bien-être innovantes.</p>
-
-                    <div class="social-links">
-                        <a href="#" class="social-link" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
-                        <a href="#" class="social-link" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
-                        <a href="#" class="social-link" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="social-link" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-                        <a href="#" class="social-link" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                    <a href="{% url 'index' %}" class="mb-4 inline-block">
+                      <!-- Using a placeholder for the logo image path -->
+                      <img src="{% static 'img/logo4.png' %}" class="h-12" alt="Paris Transfer Logo">
+                    </a>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        Your premier choice for seamless transfers in Paris. We bring harmony and peace of mind to your travels with reliable and innovative solutions.
+                    </p>
+                    <div class="flex space-x-3 mt-6">
+                        <a href="#" class="social-link w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-red-600 transition-colors" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-link w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-red-600 transition-colors" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-link w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-red-600 transition-colors" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-link w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-red-600 transition-colors" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
                     </div>
                 </div>
 
-                <!-- Colonne 2 - Liens rapides -->
+                <!-- Column 2: Navigation -->
                 <div class="footer-column">
-                    <h3>Navigation</h3>
-                    <ul class="footer-links">
-                        <li><a href="#">About</a></li>
-                        <li><a href="#">Booking</a></li>
-<!--                        <li><a href="#"></a></li>-->
-<!--                        <li><a href="#">Témoignages</a></li>-->
-<!--                        <li><a href="#">Événements</a></li>-->
-<!--                        <li><a href="#">Blog</a></li>-->
+                    <h3 class="text-lg font-semibold mb-4 tracking-wider uppercase">Navigation</h3>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-gray-400 hover:text-white hover:pl-2 transition-all">About</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white hover:pl-2 transition-all">Booking</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white hover:pl-2 transition-all">Services</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white hover:pl-2 transition-all">Contact</a></li>
                     </ul>
                 </div>
 
-                <!-- Colonne 3 - Support -->
+                <!-- Column 3: Support -->
                 <div class="footer-column">
-                    <h3>Support</h3>
-                    <ul class="footer-links">
-                        <li><a href="#">Centre d'aide</a></li>
-                        <li><a href="#">FAQ</a></li>
-<!--                        <li><a href="#">Contactez-nous</a></li>-->
-<!--                        <li><a href="#">Politique de confidentialité</a></li>-->
-<!--                        <li><a href="#">CGU</a></li>-->
-<!--                        <li><a href="#">Accessibilité</a></li>-->
+                    <h3 class="text-lg font-semibold mb-4 tracking-wider uppercase">Support</h3>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-gray-400 hover:text-white hover:pl-2 transition-all">Help Center</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white hover:pl-2 transition-all">FAQ</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white hover:pl-2 transition-all">Privacy Policy</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white hover:pl-2 transition-all">Terms of Service</a></li>
                     </ul>
                 </div>
+
+
 
                 <!-- Colonne 4 - Contact -->
 
@@ -450,3 +451,4 @@
             }
         }
 </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">

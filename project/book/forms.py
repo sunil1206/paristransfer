@@ -1,99 +1,80 @@
 # app/forms.py
 from django import forms
-from .models import Booking, TripLeg, Location, TIME_CHOICES
+from .models import Booking, Location, TIME_CHOICES
 
 
 def _locations():
+    """Helper to provide an ordered queryset of locations for form fields."""
     return Location.objects.all().order_by("name")
 
 
 class BookingForm(forms.ModelForm):
-    # Extra leg fields (not saved on Booking directly)
-    pickup_location_1 = forms.ModelChoiceField(
-        queryset=_locations(), required=True, label="Pickup Location"
-    )
-    dropoff_location_1 = forms.ModelChoiceField(
-        queryset=_locations(), required=True, label="Dropoff Location"
-    )
-    pickup_location_2 = forms.ModelChoiceField(
-        queryset=_locations(), required=False, label="Return Pickup Location"
-    )
-    dropoff_location_2 = forms.ModelChoiceField(
-        queryset=_locations(), required=False, label="Return Dropoff Location"
-    )
+    """
+    FIX: This form is now structured to correctly handle all user inputs for a multi-step process.
+    - Removed redundant/conflicting fields from Meta (e.g., pickup_address).
+    - All location and address fields are now custom fields, processed cleanly in the view.
+    - Removed the extra 'passengers' field to rely solely on 'adults' and 'children'.
+    """
 
-    # Per-leg addresses
+    # --- Custom fields for Step 1 & 2 ---
+
+    # Leg 1 (Outbound)
+    pickup_location_1 = forms.ModelChoiceField(queryset=_locations(), required=True, label="Pickup Location")
+    dropoff_location_1 = forms.ModelChoiceField(queryset=_locations(), required=True, label="Dropoff Location")
     pickup_address_1 = forms.CharField(required=False, label="Pickup Address (optional)")
     dropoff_address_1 = forms.CharField(required=False, label="Dropoff Address (optional)")
+
+    # Leg 2 (Return)
+    pickup_location_2 = forms.ModelChoiceField(queryset=_locations(), required=False, label="Return Pickup Location")
+    dropoff_location_2 = forms.ModelChoiceField(queryset=_locations(), required=False, label="Return Dropoff Location")
     pickup_address_2 = forms.CharField(required=False, label="Return Pickup Address (optional)")
     dropoff_address_2 = forms.CharField(required=False, label="Return Dropoff Address (optional)")
 
-    # Passengers (pricing tiers)
-    passengers = forms.IntegerField(min_value=1, max_value=8, initial=1, required=True, label="Passengers")
-
-    # Passenger details
-    adults   = forms.IntegerField(min_value=1, initial=1, label="Adults")
-    children = forms.IntegerField(min_value=0, initial=0, required=False, label="Children")
-    luggage  = forms.IntegerField(min_value=0, initial=0, required=False, label="Luggage")
-
     class Meta:
         model = Booking
+        # These are the fields that are directly saved to the Booking model from the form.
         fields = [
             "trip_type", "transport_type",
             "pickup_time", "return_time",
-            # summary addresses (leg 1 stored here)
-            "pickup_address", "dropoff_address",
             "first_name", "last_name", "email", "country_code", "phone",
             "promo_code", "notes",
             "adults", "children", "luggage", "booster_seats", "flight_number",
             "checkin_date", "checkout_date",
         ]
         widgets = {
-            "trip_type": forms.RadioSelect(attrs={"class": "form-check-input"}),
-            "transport_type": forms.RadioSelect(attrs={"class": "form-check-input"}),
-            "pickup_address": forms.TextInput(attrs={"class": "form-control"}),
-            "dropoff_address": forms.TextInput(attrs={"class": "form-control"}),
-            "first_name": forms.TextInput(attrs={"class": "form-control"}),
-            "last_name": forms.TextInput(attrs={"class": "form-control"}),
-            "email": forms.EmailInput(attrs={"class": "form-control"}),
-            "country_code": forms.TextInput(attrs={"class": "form-control"}),
-            "phone": forms.TextInput(attrs={"class": "form-control"}),
-            # FIX: promo_code should be text not select
-            "promo_code": forms.TextInput(attrs={"class": "form-control"}),
-            "notes": forms.Textarea(attrs={"class": "form-control"}),
-            "adults": forms.NumberInput(attrs={"class": "form-control"}),
-            "children": forms.NumberInput(attrs={"class": "form-control"}),
-            "luggage": forms.NumberInput(attrs={"class": "form-control"}),
-            "booster_seats": forms.NumberInput(attrs={"class": "form-control"}),
-            "flight_number": forms.TextInput(attrs={"class": "form-control"}),
-            "checkin_date": forms.DateInput(attrs={"class": "form-control", "type": "date"}),
-            "checkout_date": forms.DateInput(attrs={"class": "form-control", "type": "date"}),
+            "trip_type": forms.RadioSelect(),
+            "transport_type": forms.RadioSelect(),
+            "first_name": forms.TextInput(),
+            "last_name": forms.TextInput(),
+            "email": forms.EmailInput(),
+            "country_code": forms.TextInput(),
+            "phone": forms.TextInput(),
+            "promo_code": forms.TextInput(),
+            "notes": forms.Textarea(attrs={"rows": 3}),
+            "adults": forms.NumberInput(attrs={"min": 1, "value": 1}),
+            "children": forms.NumberInput(attrs={"min": 0, "value": 0}),
+            "luggage": forms.NumberInput(attrs={"min": 0, "value": 0}),
+            "booster_seats": forms.NumberInput(attrs={"min": 0, "value": 0}),
+            "flight_number": forms.TextInput(),
+            "checkin_date": forms.DateInput(attrs={"type": "date"}),
+            "checkout_date": forms.DateInput(attrs={"type": "date"}),
+            "pickup_time": forms.Select(),
+            "return_time": forms.Select(),
         }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        # Ensure choices exist only if fields are defined on Booking
-        if "pickup_time" in self.fields:
-            self.fields["pickup_time"].choices = [("", "— Select time —")] + TIME_CHOICES
-        if "return_time" in self.fields:
-            self.fields["return_time"].choices = [("", "— Select time —")] + TIME_CHOICES
+        # Add a placeholder to the time choice fields for better UX
+        self.fields["pickup_time"].choices = [("", "— Select time —")] + TIME_CHOICES
+        self.fields["return_time"].choices = [("", "— Select time —")] + TIME_CHOICES
 
     def clean(self):
-        cleaned = super().clean()
-        if cleaned.get("trip_type") == "Round Trip":
-            if not cleaned.get("pickup_location_2"):
-                self.add_error("pickup_location_2", "Required for round trip.")
-            if not cleaned.get("dropoff_location_2"):
-                self.add_error("dropoff_location_2", "Required for round trip.")
-            if not cleaned.get("return_time"):
-                self.add_error("return_time", "Return time is required for round trip.")
-        return cleaned
-
-
-class TripLegForm(forms.ModelForm):
-    class Meta:
-        model = TripLeg
-        fields = [
-            "pickup_location", "dropoff_location",
-            "sequence", "pickup_address", "dropoff_address"
-        ]
+        cleaned_data = super().clean()
+        if cleaned_data.get("trip_type") == "Round Trip":
+            if not cleaned_data.get("pickup_location_2"):
+                self.add_error("pickup_location_2", "Return pickup location is required for a round trip.")
+            if not cleaned_data.get("dropoff_location_2"):
+                self.add_error("dropoff_location_2", "Return dropoff location is required for a round trip.")
+            if not cleaned_data.get("return_time"):
+                self.add_error("return_time", "Return time is required for a round trip.")
+        return cleaned_data

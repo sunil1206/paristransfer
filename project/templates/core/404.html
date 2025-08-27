@@ -22,3 +22,111 @@
         </div>
         <!-- 404 End -->
 {% endblock %}
+
+
+{% load static %}
+
+<!--
+  HEAD Section:
+  This includes the necessary CDN links for Tailwind CSS and Font Awesome.
+  These should ideally be in your base template's <head> tag.
+-->
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        // Simple script for the back-to-top button
+        window.addEventListener('scroll', function() {
+            var backToTopButton = document.getElementById('backToTop');
+            if (window.pageYOffset > 300) {
+                backToTopButton.classList.add('opacity-100', 'visible');
+            } else {
+                backToTopButton.classList.remove('opacity-100', 'visible');
+            }
+        });
+    </script>
+    <style>
+        /* Custom styles for a polished look */
+        .footer-bg {
+            background-color: #0d254c; /* A deep blue inspired by your logo */
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100">
+
+    <!-- Your page content goes here -->
+    <div class="h-screen"></div>
+
+    <!-- Redesigned Footer -->
+    <footer id="footer" class="footer-bg text-white relative pt-16 pb-8">
+        <div class="container mx-auto px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-12">
+
+                <!-- Column 1: About & Logo -->
+                <div class="footer-column">
+                    <a href="{% url 'index' %}" class="mb-4 inline-block">
+                      <!-- Using a placeholder for the logo image path -->
+                      <img src="{% static 'img/logo4.png' %}" class="h-12" alt="Paris Transfer Logo">
+                    </a>
+                    <p class="text-gray-400 text-sm leading-relaxed">
+                        Your premier choice for seamless transfers in Paris. We bring harmony and peace of mind to your travels with reliable and innovative solutions.
+                    </p>
+                    <div class="flex space-x-3 mt-6">
+                        <a href="#" class="social-link w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-red-600 transition-colors" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="social-link w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-red-600 transition-colors" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="social-link w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-red-600 transition-colors" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="social-link w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-red-600 transition-colors" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+
+                <!-- Column 2: Navigation -->
+                <div class="footer-column">
+                    <h3 class="text-lg font-semibold mb-4 tracking-wider uppercase">Navigation</h3>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-gray-400 hover:text-white hover:pl-2 transition-all">About</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white hover:pl-2 transition-all">Booking</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white hover:pl-2 transition-all">Services</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white hover:pl-2 transition-all">Contact</a></li>
+                    </ul>
+                </div>
+
+                <!-- Column 3: Support -->
+                <div class="footer-column">
+                    <h3 class="text-lg font-semibold mb-4 tracking-wider uppercase">Support</h3>
+                    <ul class="space-y-3">
+                        <li><a href="#" class="text-gray-400 hover:text-white hover:pl-2 transition-all">Help Center</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white hover:pl-2 transition-all">FAQ</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white hover:pl-2 transition-all">Privacy Policy</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white hover:pl-2 transition-all">Terms of Service</a></li>
+                    </ul>
+                </div>
+
+                <!-- Column 4: Newsletter -->
+                <div class="footer-column">
+                    <h3 class="text-lg font-semibold mb-4 tracking-wider uppercase">Stay Updated</h3>
+                    <p class="text-gray-400 text-sm mb-4">Subscribe to our newsletter for exclusive offers and news.</p>
+                    <form class="flex flex-col sm:flex-row gap-2">
+                        <input type="email" placeholder="Your Email" class="w-full px-4 py-2 rounded-md bg-white/10 border border-white/20 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-500">
+                        <button type="submit" class="bg-red-600 text-white font-semibold px-5 py-2 rounded-md hover:bg-red-700 transition-colors flex-shrink-0">Subscribe</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Copyright -->
+            <div class="copyright border-t border-white/10 pt-8 text-center text-sm text-gray-400">
+                <p>&copy; <script>document.write(new Date().getFullYear())</script> Paris Disneyland Transfer Service. All Rights Reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to top button -->
+    <a href="#" id="backToTop" class="fixed bottom-6 right-6 w-12 h-12 bg-red-600 text-white rounded-full flex items-center justify-center text-xl cursor-pointer opacity-0 invisible transition-all duration-300 shadow-lg hover:bg-red-700 hover:-translate-y-1" aria-label="Back to top">
+        <i class="fas fa-arrow-up"></i>
+    </a>
+
+</body>

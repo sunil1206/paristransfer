@@ -10,6 +10,14 @@
 {% endblock %}
 
 {% block content %}
+<div
+  class="absolute inset-0 opacity-50 bg-no-repeat bg-center"
+  style="
+    background-image: url('{% static 'img/grid.82d1b5bd.svg' %}');
+    -webkit-mask-image: linear-gradient(to right, transparent, black 20%, black 70%, transparent);
+    mask-image: linear-gradient(to right, transparent, black 20%, black 70%, transparent);
+  ">
+</div>
     {% include 'core/nav.html' %}
     {% include 'core/slider.html' %}
 
