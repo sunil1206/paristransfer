@@ -30,6 +30,14 @@ class BookingForm(forms.ModelForm):
     pickup_address_2 = forms.CharField(required=False, label="Return Pickup Address (optional)")
     dropoff_address_2 = forms.CharField(required=False, label="Return Dropoff Address (optional)")
 
+    passengers = forms.IntegerField(
+        required=True,
+        min_value=1,
+        initial=1,
+        label="Passengers",
+        widget=forms.NumberInput(attrs={"min": 1, "value": 1})
+    )
+
     class Meta:
         model = Booking
         # These are the fields that are directly saved to the Booking model from the form.
