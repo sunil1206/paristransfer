@@ -1,60 +1,66 @@
 {% load static %}
 
-<!--
-  HEAD Section:
-  This includes the necessary CDN links for Tailwind CSS (for styling) and Alpine.js (for interactivity).
-  These should ideally be in your base template's <head> tag.
--->
 <head>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script defer src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
     <style>
-        /* A simple transition for the accordion panel */
         [x-cloak] { display: none !important; }
     </style>
 </head>
 
 
-<section class="section-padding bg-gray-50 py-16 sm:py-24">
-    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-        <!-- Section Header -->
-        <div class="text-center mb-12">
-            <h2 class="text-base font-semibold text-blue-600 tracking-wider uppercase">FAQ</h2>
-            <p class="mt-2 text-3xl lg:text-4xl font-extrabold text-gray-900 tracking-tight">
-                Frequently Asked Questions
+<section class="bg-slate-50 dark:bg-slate-900 py-16 sm:py-24">
+    <div class="mx-auto max-w-7xl px-6 lg:px-8">
+        <div class="mx-auto max-w-3xl text-center">
+            <h2 class="text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl">
+                Answers to Your Questions
+            </h2>
+            <p class="mt-4 text-lg leading-8 text-gray-600 dark:text-gray-400">
+                Find answers to common questions about our services, policies, and platform features.
             </p>
         </div>
 
-        <!--
-          Accordion Container
-          - `x-data="{ openFaq: 1 }"` initializes Alpine.js. 'openFaq' will store the ID of the currently open item.
-          - We set it to 1 initially to have the first FAQ open by default. Set to `null` to have all closed.
-        -->
-        <div x-data="{ openFaq: 1 }" class="max-w-3xl mx-auto bg-white rounded-2xl shadow-lg p-4">
-            <ul class="accordion-box">
-                {% for faq in faqs %}
-                    <li x-data="{ faqId: {{ forloop.counter }} }" class="accordion block border-b last:border-b-0 border-gray-200">
-                        <!-- Accordion Button -->
-                        <button @click="openFaq = (openFaq === faqId) ? null : faqId"
-                                class="acc-btn w-full flex justify-between items-center text-left text-gray-800 py-5 px-4 focus:outline-none">
-                            <span class="text-lg font-medium">{{ faq.question }}</span>
-                            <!-- Animated Icon -->
-                            <span class="text-blue-500 transition-transform duration-300"
-                                  :class="{ 'rotate-180': openFaq === faqId }">
-                                <i class="fas fa-chevron-down"></i>
-                            </span>
-                        </button>
+        <div x-data="{ openFaq: null }" class="mt-16 max-w-4xl mx-auto flex flex-col gap-y-6">
 
-                        <!--
-                          Accordion Content
-                          - `x-collapse` now works because the plugin is loaded.
-                        -->
-                        <div x-show="openFaq === faqId" x-collapse x-cloak class="acc-content">
-                            <div class="content px-4 pb-5">
-                                <div class="text text-gray-600 leading-relaxed">{{ faq.answer|linebreaksbr }}</div>
-                            </div>
+            {% for faq in faqs %}
+                <div x-data="{ faqId: {{ forloop.counter }} }"
+                     class="bg-white dark:bg-slate-800 rounded-xl shadow-sm ring-1 ring-gray-900/5 transition-all duration-300 hover:-translate-y-1 hover:shadow-lg">
+
+                    <button @click="openFaq = (openFaq === faqId) ? null : faqId"
+                            class="flex w-full items-start justify-between p-6 text-left">
+
+                        <span class="flex items-start">
+<!--                            <span class="mr-4 h-7 w-7 flex-shrink-0 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-300 font-semibold">-->
+<!--                              {{ forloop.counter }}-->
+<!--                            </span>-->
+
+                            <span class="text-lg font-semibold text-gray-800 dark:text-gray-100"
+                                  :class="{ '!text-blue-600 dark:!text-blue-400': openFaq === faqId }">
+                                {{ faq.question }}
+                            </span>
+                        </span>
+
+                        <span class="ml-4 flex h-7 w-7 flex-shrink-0 items-center justify-center">
+                            <svg class="h-6 w-6 text-gray-500" :class="{ 'text-blue-600': openFaq === faqId }" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">
+                              <path x-show="openFaq === faqId" x-cloak stroke-linecap="round" stroke-linejoin="round" d="M18 12H6" />
+                              <path x-show="openFaq !== faqId" stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" />
+                            </svg>
+                        </span>
+                    </button>
+
+                    <div x-show="openFaq === faqId" x-collapse x-cloak>
+                        <div class="px-6 pb-6 pt-4 border-t border-gray-200 dark:border-slate-700">
+                            <p class="text-base leading-7 text-gray-700 dark:text-gray-300">
+                                {{ faq.answer|linebreaksbr }}
+                            </p>
                         </div>
-                    </li>
-                {% endfor %}
-            </ul>
+                    </div>
+                </div>
+            {% endfor %}
+
         </div>
     </div>
 </section>

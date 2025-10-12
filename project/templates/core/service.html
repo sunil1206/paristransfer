@@ -1,64 +1,79 @@
-<!-- Services -->
-<section class="services section-padding">
-    <div class="container">
-        <div class="row">
-                <div class="col-md-12">
-                    <div class="section-subtitle">Our Services</div>
-                    <div class="section-title">Facilities</div>
+
+
+<!-- Font Awesome for icons (if not already in your base template) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<!-- Tailwind CSS (if not already in your base template) -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+    /* New, cleaner design for the service cards */
+    .service-card {
+        background-color: white;
+        border-radius: 1rem; /* 16px */
+        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        transition: all 0.3s ease-in-out;
+        overflow: hidden; /* Important for keeping the image corners rounded */
+    }
+    .service-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    }
+    .service-card-image {
+        width: 100%;
+        height: 14rem; /* 224px */
+        object-fit: cover;
+    }
+    .service-card-icon-wrapper {
+        width: 4rem; /* 64px */
+        height: 4rem; /* 64px */
+        border-radius: 9999px; /* full circle */
+        background-color: #e0e7ff; /* Indigo-100 */
+        color: #4f46e5; /* Indigo-600 */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.75rem; /* 28px */
+    }
+</style>
+
+<!-- Services Section -->
+<section class="py-20 lg:py-24 bg-gray-50">
+    <div class="container mx-auto px-4">
+        <!-- Section Header -->
+        <div class="text-center mb-16 max-w-3xl mx-auto">
+            <h2 class="text-base font-semibold text-indigo-600 tracking-wider uppercase">Our Services</h2>
+            <p class="mt-2 text-4xl font-extrabold text-gray-900 tracking-tight sm:text-5xl">
+                Facilities We Provide
+            </p>
+            <p class="mt-4 text-lg text-gray-600">
+                We offer a range of premium services to ensure your journey is seamless, comfortable, and safe from start to finish.
+            </p>
+        </div>
+
+        <!-- Services Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+
+            {% for service in services %}
+            <div class="service-card">
+                <!-- Image at the top -->
+                <img class="service-card-image" src="{{ service.image.url }}" alt="{{ service.alt_text }}">
+
+                <!-- Content area below the image -->
+                <div class="p-6 flex flex-col items-start text-left">
+                    {% if service.icon %}
+                    <div class="service-card-icon-wrapper">
+                        <i class="{{ service.icon }}"></i>
+                    </div>
+                    {% endif %}
+                    <h3 class="mt-4 text-xl font-bold text-gray-900">{{ service.title }}</h3>
+                    <p class="mt-2 text-gray-600 leading-relaxed">
+                        {{ service.description }}
+                    </p>
                 </div>
             </div>
-        {% for service in services %}
-            <div class="row">
-                {% if forloop.counter0|divisibleby:2 %}
-                    <div class="col-md-6 p-0 animate-box" data-animate-effect="fadeInLeft">
-                        <div class="img left">
-                            <a href="">
-                                <img src="{{ service.image.url }}" alt="{{ service.alt_text }}">
-                            </a>
-                        </div>
-                    </div>
-                    <div class="col-md-6 p-0 bg-cream valign animate-box" data-animate-effect="fadeInRight">
-                        <div class="content">
-                            <div class="cont text-left">
-                                <div class="info">
-                                    <h6>Discover</h6>
-                                </div>
-                                <h4>{{ service.title }}</h4>
-                                <p>{{ service.description }}</p>
-                                <div class="butn-dark">
-<!--                                    <a href="">-->
-<!--                                        <span>Learn More</span>-->
-<!--                                    </a>-->
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                {% else %}
-                    <div class="col-md-6 bg-cream p-0 order2 valign animate-box" data-animate-effect="fadeInLeft">
-                        <div class="content">
-                            <div class="cont text-left">
-                                <div class="info">
-                                    <h6>Experiences</h6>
-                                </div>
-                                <h4>{{ service.title }}</h4>
-                                <p>{{ service.description }}</p>
-                                <div class="butn-dark">
-<!--                                    <a href="">-->
-<!--                                        <span>Learn More</span>-->
-<!--                                    </a>-->
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-6 p-0 order1 animate-box" data-animate-effect="fadeInRight">
-                        <div class="img">
-                            <a href="">
-                                <img src="{{ service.image.url }}" alt="{{ service.alt_text }}">
-                            </a>
-                        </div>
-                    </div>
-                {% endif %}
-            </div>
-        {% endfor %}
+            {% endfor %}
+
+        </div>
     </div>
 </section>
+

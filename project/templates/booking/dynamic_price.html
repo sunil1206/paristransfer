@@ -3,8 +3,6 @@
 {% block content %}
 
 <head>
-
-    <!-- Tailwind CSS for styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Custom styles to match the reference and style Django form fields */
@@ -56,19 +54,15 @@
 
 
     <div id="budget" class="w-full max-w-5xl mx-auto">
-        <!-- Main Title -->
         <div class="text-center mb-6">
             <h1 class="text-4xl md:text-5xl font-bold text-gray-800">Find your next journey</h1>
             <p class="text-gray-500 mt-2">Book buses, minibuses, and more with ease.</p>
         </div>
 
-        <!-- Search Component Container -->
         <div class="bg-white rounded-xl shadow-lg p-4 md:p-6">
-            <!-- FORM: The action, method, and data-quote-url are preserved -->
-            <form id="booking-form" method="POST" action="" data-quote-url="{% url 'booking_quote' %}">
+            <form id="booking-form" method="POST" action="{% url 'index' %}" data-quote-url="{% url 'booking_quote' %}">
                 {% csrf_token %}
 
-                <!-- Tabs for Trip Type -->
                 <div class="flex border-b mb-4 trip-tabs">
                     {% for radio in form.trip_type %}
                     <div class="flex-1">
@@ -81,74 +75,60 @@
                     {% endfor %}
                 </div>
 
-                <!-- Main Input Fields Grid -->
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <!-- Pickup Location -->
                     <div class="flex items-center gap-3 p-3 border rounded-lg hover:border-blue-500 transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                         <div class="w-full">
-                            <label class="text-xs text-gray-500">Pickup Location</label>
+                            <label for="{{ form.pickup_location_1.id_for_label }}" class="text-xs text-gray-500">Pickup Location</label>
                             {{ form.pickup_location_1 }}
                         </div>
                     </div>
 
-                    <!-- Dropoff Location -->
                     <div class="flex items-center gap-3 p-3 border rounded-lg hover:border-blue-500 transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                         <div class="w-full">
-                            <label class="text-xs text-gray-500">Dropoff Location</label>
+                            <label for="{{ form.dropoff_location_1.id_for_label }}" class="text-xs text-gray-500">Dropoff Location</label>
                             {{ form.dropoff_location_1 }}
                         </div>
                     </div>
 
-                    <!-- Pickup Time -->
                     <div class="flex items-center gap-3 p-3 border rounded-lg hover:border-blue-500 transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                         <div class="w-full">
-                            <label class="text-xs text-gray-500">Pickup Time</label>
+                            <label for="{{ form.pickup_time.id_for_label }}" class="text-xs text-gray-500">Pickup Time</label>
                             {{ form.pickup_time }}
                         </div>
                     </div>
 
-                    <!-- Return Pickup Location (for Round Trip) -->
                     <div id="leg2_pickup" style="display:none;" class="flex items-center gap-3 p-3 border rounded-lg hover:border-blue-500 transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                         <div class="w-full">
-                            <label class="text-xs text-gray-500">Return Pickup</label>
+                            <label for="{{ form.pickup_location_2.id_for_label }}" class="text-xs text-gray-500">Return Pickup</label>
                             {{ form.pickup_location_2 }}
                         </div>
                     </div>
 
-                    <!-- Return Dropoff Location (for Round Trip) -->
-                     <div id="leg2_dropoff" style="display:none;" class="flex items-center gap-3 p-3 border rounded-lg hover:border-blue-500 transition-colors">
+                    <div id="leg2_dropoff" style="display:none;" class="flex items-center gap-3 p-3 border rounded-lg hover:border-blue-500 transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                         <div class="w-full">
-                            <label class="text-xs text-gray-500">Return Dropoff</label>
+                            <label for="{{ form.dropoff_location_2.id_for_label }}" class="text-xs text-gray-500">Return Dropoff</label>
                             {{ form.dropoff_location_2 }}
                         </div>
                     </div>
 
-                    <!-- Return Time (for Round Trip) -->
                     <div id="return_time_container" style="display:none;" class="flex items-center gap-3 p-3 border rounded-lg hover:border-blue-500 transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                         <div class="w-full">
-                            <label class="text-xs text-gray-500">Return Time</label>
+                            <label for="{{ form.return_time.id_for_label }}" class="text-xs text-gray-500">Return Time</label>
                             {{ form.return_time }}
                         </div>
                     </div>
                 </div>
 
-                <!--
-                  *** UPDATED BOTTOM SECTION ***
-                  - This outer container now holds all bottom elements. It stacks on small screens and becomes a row on large screens.
-                -->
                 <div class="flex flex-col lg:flex-row items-center lg:items-end justify-between mt-6 gap-6">
 
-                    <!-- Left-side container for Transport and Passengers -->
                     <div class="flex flex-col sm:flex-row items-start sm:items-end gap-4 w-full lg:w-auto">
-                        <!-- Transport Type Radio Pills -->
                         <div class="w-full sm:w-auto">
-<!--                            <label class="text-sm font-semibold text-gray-700 mb-2 block">Transport Type</label>-->
                             <div class="grid grid-cols-2 sm:grid-cols-2 gap-2 transport-pills">
                                 {% for radio in form.transport_type %}
                                 <label for="{{ radio.id_for_label }}" class="cursor-pointer">
@@ -165,24 +145,20 @@
                             </div>
                         </div>
 
-                        <!-- Passengers -->
                         <div class="flex items-center gap-3 p-3 border rounded-lg hover:border-blue-500 transition-colors w-full sm:w-auto">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
                             <div class="w-full">
-                                <label class="text-xs text-gray-500">Passengers</label>
+                                <label for="{{ form.passengers.id_for_label }}" class="text-xs text-gray-500">Passengers</label>
                                 {{ form.passengers }}
                             </div>
                         </div>
                     </div>
 
-                    <!-- Right-side container for Price and Search Button -->
                     <div class="flex items-center gap-4 w-full lg:w-auto">
-                        <!-- Price Estimate Badge -->
                         <div class="text-right flex-grow lg:flex-grow-0">
                              <div id="quoteHint" class="text-xs text-gray-400 mb-1">Enter details for a price</div>
                              <div class="text-2xl font-bold text-gray-800" id="priceDisplay">€0.00</div>
                         </div>
-                        <!-- Search Button -->
                         <button type="submit" class="w-full sm:w-auto bg-blue-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
                             SEARCH
                         </button>
@@ -192,10 +168,11 @@
         </div>
     </div>
 
-<!-- ===================== JS: Round Trip UI & Live Price ===================== -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById("booking-form");
+    if (!form) return;
+
     const leg2_pickup = document.getElementById("leg2_pickup");
     const leg2_dropoff = document.getElementById("leg2_dropoff");
     const returnTimeContainer = document.getElementById("return_time_container");
@@ -204,7 +181,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const hint = document.getElementById('quoteHint');
 
     const get = sel => (form.querySelector(sel) || {}).value || "";
-
     const currentTrip = () => (form.querySelector('input[name="trip_type"]:checked') || {}).value || "";
 
     const setReq = (name, on) => {
@@ -221,9 +197,12 @@ document.addEventListener('DOMContentLoaded', function() {
         leg2_dropoff.style.display = displayStyle;
         returnTimeContainer.style.display = displayStyle;
 
-        setReq("pickup_location_2", isRT);
-        setReq("dropoff_location_2", isRT);
-        setReq("return_time", isRT);
+        // This client-side 'required' is for UX; the server-side validation is the true safeguard.
+        // In the updated form, server-side validation handles this, so we can make these optional
+        // from the client's perspective to allow auto-fill to work smoothly.
+        // setReq("pickup_location_2", isRT);
+        // setReq("dropoff_location_2", isRT);
+        // setReq("return_time", isRT);
 
         const p1 = get('[name="pickup_location_1"]');
         const d1 = get('[name="dropoff_location_1"]');
@@ -232,6 +211,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (isRT && p1 && d1 && p2 && d2 && !p2.value && !d2.value) {
             p2.value = d1;
             d2.value = p1;
+            // Dispatch change events to notify any listeners (like the quote fetcher)
             p2.dispatchEvent(new Event("change", { bubbles: true }));
             d2.dispatchEvent(new Event("change", { bubbles: true }));
         }
@@ -249,8 +229,9 @@ document.addEventListener('DOMContentLoaded', function() {
     function buildQuery() {
         const p = new URLSearchParams();
         const put = (k, v) => { if (v) p.set(k, v); };
+
         put("trip_type", currentTrip());
-        // For radio buttons, we need to find the checked one
+
         const transportType = form.querySelector('input[name="transport_type"]:checked');
         if (transportType) {
             put("transport_type", transportType.value);
@@ -264,11 +245,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function showPrice(val) { if (priceDisplay) priceDisplay.textContent = val; }
-    function showMessage(msg) { if (hint) { hint.textContent = msg; hint.style.display = ''; } }
+    function showMessage(msg) { if (hint) { hint.textContent = msg; hint.style.display = 'block'; } }
     function clearMessage() { if (hint) { hint.style.display = 'none'; } }
 
     let timeout;
-    const debounce = (fn, ms = 250) => (...args) => {
+    const debounce = (fn, ms = 300) => (...args) => {
         clearTimeout(timeout);
         timeout = setTimeout(() => fn(...args), ms);
     };
@@ -277,22 +258,30 @@ document.addEventListener('DOMContentLoaded', function() {
         ensureDefaults();
         const p1 = form.querySelector('[name="pickup_location_1"]')?.value;
         const d1 = form.querySelector('[name="dropoff_location_1"]')?.value;
+
         if (!p1 || !d1) {
             showPrice("€0.00");
             showMessage("Select pickup & drop-off for a price.");
             return;
         }
+
+        showPrice("..."); // Show loading state
+        showMessage("Calculating price...");
+
         try {
             const res = await fetch(`${quoteUrl}?${buildQuery()}`);
+            if (!res.ok) throw new Error('Network response was not ok');
+
             const data = await res.json();
             if (data && data.price != null) {
                 clearMessage();
                 showPrice(`€${Number(data.price).toFixed(2)}`);
             } else {
                 showPrice("€0.00");
-                showMessage("No price found for this route.");
+                showMessage(data.error || "No price found for this route.");
             }
-        } catch (_) {
+        } catch (error) {
+            console.error("Fetch quote error:", error);
             showPrice("€0.00");
             showMessage("Could not fetch an estimate.");
         }
@@ -313,6 +302,5 @@ document.addEventListener('DOMContentLoaded', function() {
     toggleRT();
 });
 </script>
-
 
 {% endblock %}

@@ -102,7 +102,8 @@ class About(models.Model, OptimizedImageMixin):
 class Amenity(models.Model):
     name = models.CharField(max_length=100)
     cab_type = models.CharField(max_length=100)
-    icon = models.CharField(max_length=255, blank=True)
+    # icon = models.CharField(max_length=255, blank=True)
+    image = models.ImageField(upload_to='icon/')
 
     def __str__(self):
         return self.name
@@ -147,7 +148,7 @@ class FAQ(models.Model):
 class Blog(models.Model):
     title = models.CharField(max_length=255)
     category = models.CharField(max_length=100)
-    date = models.DateField()
+    date = models.DateField(auto_now_add=True)
     image = models.ImageField(upload_to='blog_images/')
     content = models.TextField()
     slug = models.SlugField(unique=True, blank=True, null=True) #added slug field
@@ -168,3 +169,14 @@ class Blog(models.Model):
 
 
 
+class Feature(models.Model):
+    name = models.CharField(max_length=100)
+    image = models.ImageField(upload_to='features/')
+    description = models.TextField()
+    order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        ordering = ['order']
+
+    def __str__(self):
+        return self.name

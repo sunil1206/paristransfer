@@ -1,44 +1,111 @@
+
+
+<!-- Font Awesome for icons (if not already in your base template) -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<!-- Tailwind CSS (if not already in your base template) -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+    .cab-card {
+        background-color: white;
+        border-radius: 1rem; /* rounded-xl */
+        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+        transition: all 0.3s ease-in-out;
+        border: 1px solid #f3f4f6; /* Gray-100 */
+        display: flex;
+        flex-direction: column;
+    }
+    .cab-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+    }
+    .cab-card-image {
+        width: 100%;
+        height: 16rem; /* 256px */
+        object-fit: cover;
+        transition: transform 0.4s ease;
+    }
+    .cab-card:hover .cab-card-image {
+        transform: scale(1.05);
+    }
+    .cab-card-content {
+        flex-grow: 1; /* Allows the button to stick to the bottom */
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+    .cab-card-button {
+        display: inline-block;
+        width: 100%;
+        text-align: center;
+        background-color: #4f46e5; /* Indigo-600 */
+        color: white;
+        font-weight: 600;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        transition: all 0.2s ease-in-out;
+    }
+    .cab-card-button:hover {
+        background-color: #4338ca; /* Indigo-700 */
+        box-shadow: 0 4px 10px rgba(79, 70, 229, 0.2);
+    }
+</style>
+
 <!-- Cab Section -->
-<section class="rooms1 section-padding bg-cream" data-scroll-index="1">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-12">
-                <div class="section-subtitle">The Luxury Travel With Us</div>
-                <div class="section-title">Cab for Ride</div>
-            </div>
+<section class="py-20 lg:py-24 bg-white">
+    <div class="container mx-auto px-4">
+        <!-- Section Header -->
+        <div class="text-center mb-16 max-w-3xl mx-auto">
+            <h2 class="text-base font-semibold text-indigo-600 tracking-wider uppercase">The Luxury Travel With Us</h2>
+            <p class="mt-2 text-4xl font-extrabold text-gray-900 tracking-tight sm:text-5xl">
+                Our Fleet for Your Ride
+            </p>
+            <p class="mt-4 text-lg text-gray-600">
+                Choose from our premium selection of vehicles, each equipped to provide the utmost comfort and style for your journey.
+            </p>
         </div>
-        <div class="row">
+
+        <!-- Cabs Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+
             {% for cab in cabs %}
-            <div class="col-md-6">
-                <div class="item">
-                    <div class="position-re o-hidden">
-                        <img src="{{ cab.image.url }}" alt="{{ cab.name }}">
+            <div class="cab-card">
+                <!-- Image with subtle zoom on hover in a rounded container -->
+                <div class="overflow-hidden rounded-t-xl">
+                    <img class="cab-card-image" src="{{ cab.image.url }}" alt="{{ cab.name }}">
+                </div>
+
+                <!-- Content -->
+                <div class="p-6 cab-card-content">
+                    <div>
+                        <h3 class="text-2xl font-bold text-gray-800">{{ cab.name }}</h3>
+
+                        <!-- Amenities List -->
+<!--                        <p class="text-sm font-medium text-gray-500 mt-4 mb-3">Includes:</p>-->
+                        <ul class="space-y-2 text-gray-600">
+                            {% for amenity in cab.amenities.all %}
+                            <li class="flex items-center">
+                                <!-- Ensure your Amenity model has an 'icon' field with a Font Awesome class -->
+                                <img src="{{ amenity.image.url }}" alt="{{ amenity.name }}" class="w-6 h-6">
+                                <br> <br>
+                                <!-- Ensure your Amenity model has a 'name' field -->
+                                <span class="ml-3">{{ amenity.name }}</span>
+                            </li>
+                            {% endfor %}
+                        </ul>
                     </div>
-                    <span class="category">
-                        <a href="{% url 'booking' %}">Book</a>
-                    </span>
-                    <div class="con">
-<!--                        <h6><a href="">{{ cab.price_per_km }}$ / km</a></h6>-->
-                        <h5>{{ cab.name }}</h5>
-                        <div class="line"></div>
-                        <div class="row facilities">
-                            <div class="col col-md-7">
-                                <ul>
-                                    {% for amenity in cab.amenities.all %}
-                                    <li><i class="{{ amenity.icon }}"></i></li>
-                                    {% endfor %}
-                                </ul>
-                            </div>
-                            <div class="col col-md-5 text-end">
-                                <div class="permalink">
-<!--                                    Details <i class="ti-arrow-right"></i>-->
-                                </div>
-                            </div>
-                        </div>
+
+                    <!-- Booking Button -->
+                    <div class="mt-8">
+                        <a href="{% url 'booking' %}" class="cab-card-button">
+                            Book Now
+                            <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
                     </div>
                 </div>
             </div>
             {% endfor %}
+
         </div>
     </div>
 </section>

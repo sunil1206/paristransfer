@@ -172,6 +172,21 @@ MESSAGE_TAGS = {
 GOOGLE_MAPS_API_KEY = 'AIzaSyA-u9dzs-PRHp6U_4Aa8XinW2Txib0MH-E'
 
 
+
+# --- TWILIO CONFIGURATION ---
+# TWILIO_ACCOUNT_SID = ''  # Paste your Account SID here
+# TWILIO_AUTH_TOKEN = ''                 # Paste your Auth Token here
+# TWILIO_PHONE_NUMBER = '+'                  # Paste your Twilio phone number here
+
+# Optional: Add your personal phone number to receive admin notifications
+# ADMIN_PHONE_NUMBER = '+33612345678'                   # Your phone number (e.g., +[CountryCode][Number])
+
+TWILIO_ACCOUNT_SID = os.getenv('ACa7d0e070e6f75167b547737f9e9a2539')
+TWILIO_AUTH_TOKEN = os.getenv('4a0e94c23a2bc7a6de2b1df8fb55d1a2')
+TWILIO_PHONE_NUMBER = os.getenv('+33683938262')
+# ADMIN_PHONE_NUMBER = os.getenv('ADMIN_PHONE_NUMBER')
+
+from decouple import config
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST ='smtp.gmail.com'
 EMAIL_PORT = 587
@@ -179,13 +194,24 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER ='samuel.fr125@gmail.com'
 EMAIL_HOST_PASSWORD = 'qdgqpgyozrdrsiuu'
 
-# zexazsyvetsnozht
-
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+# ADMIN_EMAILS = [config('sunilma94@gmail.com',)] # List of admin emails
+
+# zexazsyvetsnozht
+# settings.py
+
+# DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 ADMIN_EMAILS = ["sunilma94@gmail.com", ]
 
-# Use console backend in DEBUG mode
-if os.getenv("DJANGO_ENV") == "development":   # or simply `if DEBUG:`
-    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
-    DEFAULT_FROM_EMAIL = "sunilma94@gmail.com"
-    ADMIN_EMAILS = [""]
+# --- CELERY CONFIGURATION ---
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = 'django-db'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+
+# # Use console backend in DEBUG mode
+# if os.getenv("DJANGO_ENV") == "development":   # or simply `if DEBUG:`
+#     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+#     DEFAULT_FROM_EMAIL = "sunilma94@gmail.com"
+#     ADMIN_EMAILS = [""]

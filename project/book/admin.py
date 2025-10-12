@@ -1,278 +1,121 @@
-# app/admin.py
 from django.contrib import admin
-from django.utils.html import format_html
-from import_export import resources, fields
-from import_export.admin import ImportExportActionModelAdmin
-from import_export.widgets import ForeignKeyWidget, IntegerWidget, DecimalWidget
-
 from .models import (
-    Location,
-    PromoCode,
-    PricingRule,
-    PriceMatrix,
-    Booking,
-    TripLeg,
+    Location, MainLocation, DetailedLocation, PromoCode, PricingRule,
+    PriceMatrix, Booking, TripLeg
 )
 
-# ---------------------------
-# Import/Export resources
-# ---------------------------
-
-class PriceMatrixResource(resources.ModelResource):
-    # Use Location names in CSV (human-friendly)
-    origin = fields.Field(
-        column_name="origin",
-        attribute="origin",
-        widget=ForeignKeyWidget(Location, "name"),
-    )
-    destination = fields.Field(
-        column_name="destination",
-        attribute="destination",
-        widget=ForeignKeyWidget(Location, "name"),
-    )
-    pax_min = fields.Field(column_name="pax_min", attribute="pax_min", widget=IntegerWidget())
-    pax_max = fields.Field(column_name="pax_max", attribute="pax_max", widget=IntegerWidget())
-    price   = fields.Field(column_name="price",   attribute="price",   widget=DecimalWidget())
-
-    class Meta:
-        model = PriceMatrix
-        fields = (
-            "origin", "destination",
-            "trip_type", "transport_type",
-            "pax_min", "pax_max", "price",
-        )
-        export_order = (
-            "origin", "destination",
-            "trip_type", "transport_type",
-            "pax_min", "pax_max", "price",
-        )
-        # natural key so re-import updates instead of duplicating
-        import_id_fields = ("origin", "destination", "trip_type", "transport_type", "pax_min", "pax_max")
-        skip_unchanged = True
-        report_skipped = True
-
-    def before_import_row(self, row, **kwargs):
-        """
-        - Ensure Locations exist (create by name if missing)
-        - Normalize Round Trip pairs textually so (origin, destination) is ordered.
-        """
-        for col in ("origin", "destination"):
-            name = (row.get(col) or "").strip()
-            if name:
-                Location.objects.get_or_create(name=name)
-
-        if (row.get("trip_type") or "").strip() == "Round Trip":
-            a = (row.get("origin") or "").strip()
-            b = (row.get("destination") or "").strip()
-            if a and b and a > b:
-                row["origin"], row["destination"] = b, a
-
-    def before_save_instance(self, instance, using_transactions, dry_run):
-        # Final guard to keep A<B for Round Trip rows
-        if instance.trip_type == "Round Trip" and instance.origin_id and instance.destination_id:
-            if instance.origin_id > instance.destination_id:
-                instance.origin_id, instance.destination_id = instance.destination_id, instance.origin_id
-
-
-# ---------------------------
-# Admin registrations
-# ---------------------------
-
+# --- The Fix: A Hidden Admin for the Base Location Model ---
+# This class provides the necessary search functionality for autocomplete_fields
+# to work across the admin site. We hide it from the admin index to avoid clutter.
 @admin.register(Location)
 class LocationAdmin(admin.ModelAdmin):
-    list_display = ("name", "latitude", "longitude")
-    search_fields = ("name", "description")
-    ordering = ("name",)
-    list_per_page = 50
+    search_fields = ('name', 'parent__name')
 
+    def has_module_permission(self, request):
+        # This returns False to hide the model from the admin index.
+        return False
 
-@admin.register(PromoCode)
-class PromoCodeAdmin(admin.ModelAdmin):
-    list_display = ("code", "discount_percentage", "active", "valid_from", "valid_until")
-    list_filter = ("active",)
-    search_fields = ("code",)
-    ordering = ("-active", "-valid_until")
-    list_editable = ("active", "discount_percentage")
+# --- Inlines ---
 
+class DetailedLocationInline(admin.TabularInline):
+    model = Location
+    fk_name = 'parent'
+    extra = 1
+    verbose_name = "Detailed Location"
+    verbose_name_plural = "Detailed Locations (Hotels, Stations, etc.)"
+    autocomplete_fields = ('parent',) # This will now work
 
-@admin.register(PricingRule)
-class PricingRuleAdmin(admin.ModelAdmin):
-    list_display = ("name", "active", "night_charge", "extra_per_passenger_fee")
-    list_editable = ("active", "night_charge", "extra_per_passenger_fee")
-    search_fields = ("name", "description")
-    list_filter = ("active",)
-    ordering = ("-active", "name")
-
-    # Optional: keep only one active rule
-    def save_model(self, request, obj, form, change):
-        super().save_model(request, obj, form, change)
-        if obj.active:
-            PricingRule.objects.exclude(pk=obj.pk).update(active=False)
-
-
-@admin.register(PriceMatrix)
-class PriceMatrixAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
-    resource_classes = [PriceMatrixResource]
-    list_display = ("trip_type", "transport_type", "origin", "destination", "pax_min", "pax_max", "price")
-    list_filter = (
-        "trip_type", "transport_type",
-        ("origin", admin.RelatedOnlyFieldListFilter),
-        ("destination", admin.RelatedOnlyFieldListFilter),
-    )
-    search_fields = ("origin__name", "destination__name")
-    ordering = ("origin__name", "destination__name", "trip_type", "transport_type", "pax_min")
-    list_editable = ("price",)
-    list_per_page = 100
-    autocomplete_fields = ("origin", "destination")
-
+    def formfield_for_dbfield(self, db_field, request, **kwargs):
+        if db_field.name == 'is_main_location':
+            kwargs['initial'] = False
+        return super().formfield_for_dbfield(db_field, request, **kwargs)
 
 class TripLegInline(admin.TabularInline):
     model = TripLeg
     extra = 0
-    fields = ("sequence", "pickup_location", "dropoff_location", "pickup_address", "dropoff_address")
-    autocomplete_fields = ("pickup_location", "dropoff_location")
-    ordering = ("sequence",)
+    fields = ('sequence', 'pickup_location', 'dropoff_location', 'pickup_address', 'dropoff_address')
+    readonly_fields = ('sequence',)
+    autocomplete_fields = ('pickup_location', 'dropoff_location') # This will now work
+    can_delete = False
 
-#
-# @admin.register(Booking)
-# class BookingAdmin(admin.ModelAdmin):
-#     inlines = [TripLegInline]
-#
-#     list_display = (
-#         "id", "created_at",
-#         "first_name", "last_name",
-#         "trip_type", "transport_type",
-#         "pickup_location", "dropoff_location",
-#         "passenger_count",
-#         "price",
-#         "email", "phone",
-#     )
-#     list_filter = (
-#         "trip_type", "transport_type",
-#         ("pickup_location", admin.RelatedOnlyFieldListFilter),
-#         ("dropoff_location", admin.RelatedOnlyFieldListFilter),
-#         "created_at",
-#     )
-#     search_fields = (
-#         "first_name", "last_name",
-#         "email", "phone",
-#         "notes", "flight_number",
-#         "pickup_address", "dropoff_address",
-#     )
-#     ordering = ("-created_at",)
-#     readonly_fields = ("created_at", "price")
-#     autocomplete_fields = ("pickup_location", "dropoff_location")
-#
-#     fieldsets = (
-#         ("Trip Overview", {
-#             "fields": (
-#                 ("trip_type", "transport_type"),
-#                 ("pickup_location", "dropoff_location"),
-#                 ("pickup_time", "return_time"),
-#                 "summary_leg_preview",
-#             )
-#         }),
-#         ("Addresses (Outbound summary on Booking)", {
-#             "fields": ("pickup_address", "dropoff_address")
-#         }),
-#         ("Passenger & Extras", {
-#             "fields": (
-#                 ("adults", "children", "luggage"),
-#                 ("booster_seats", "flight_number"),
-#                 ("checkin_date", "checkout_date"),
-#             )
-#         }),
-#         ("Customer", {
-#             "fields": (
-#                 ("first_name", "last_name"),
-#                 ("email", "country_code", "phone"),
-#             )
-#         }),
-#         ("Pricing & Meta", {
-#             "fields": ("promo_code", "notes", "price", "created_at")
-#         }),
-#     )
-#
-#     def passenger_count(self, obj):
-#         return (obj.adults or 0) + (obj.children or 0)
-#     passenger_count.short_description = "Passengers"
-#
-#     def summary_leg_preview(self, obj):
-#         # Custom display: show first leg details (you can change as needed)
-#         legs = obj.tripleg_set.all().order_by("sequence")
-#         if legs.exists():
-#             first = legs.first()
-#             return f"{first.pickup_location} → {first.dropoff_location}"
-#         return "No legs"
-#     summary_leg_preview.short_description = "Trip Legs"
+# --- Proxy Model Admins for Convenient Management ---
+
+@admin.register(MainLocation)
+class MainLocationAdmin(admin.ModelAdmin):
+    list_display = ('name', 'description')
+    search_fields = ('name',)
+    inlines = [DetailedLocationInline]
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).filter(is_main_location=True)
+
+    def save_model(self, request, obj, form, change):
+        obj.is_main_location = True
+        super().save_model(request, obj, form, change)
+
+@admin.register(DetailedLocation)
+class DetailedLocationAdmin(admin.ModelAdmin):
+    list_display = ('name', 'parent')
+    search_fields = ('name', 'parent__name')
+    list_filter = ('parent',)
+    autocomplete_fields = ('parent',) # This will now work
+
+    def save_model(self, request, obj, form, change):
+        obj.is_main_location = False
+        super().save_model(request, obj, form, change)
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).filter(is_main_location=False)
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        if db_field.name == "parent":
+            kwargs["queryset"] = Location.objects.filter(is_main_location=True)
+        return super().formfield_for_foreignkey(db_field, request, **kwargs)
+
+# --- Other Model Admins ---
+
+@admin.register(PromoCode)
+class PromoCodeAdmin(admin.ModelAdmin):
+    list_display = ('code', 'discount_percentage', 'valid_from', 'valid_until', 'active')
+    list_editable = ('active',)
+    search_fields = ('code',)
+
+@admin.register(PricingRule)
+class PricingRuleAdmin(admin.ModelAdmin):
+    list_display = ('name', 'night_charge', 'active')
+    list_editable = ('active', 'night_charge')
+
+@admin.register(PriceMatrix)
+class PriceMatrixAdmin(admin.ModelAdmin):
+    list_display = ('origin', 'destination', 'trip_type', 'transport_type', 'pax_range', 'price')
+    list_filter = ('trip_type', 'transport_type')
+    search_fields = ('origin__name', 'destination__name')
+    autocomplete_fields = ('origin', 'destination') # This will now work
+    list_per_page = 20
+
+    def pax_range(self, obj):
+        return f"{obj.pax_min} - {obj.pax_max}"
+    pax_range.short_description = 'Passengers'
+
 @admin.register(Booking)
 class BookingAdmin(admin.ModelAdmin):
+    list_display = ('customer_name', 'trip_summary', 'price', 'trip_type', 'created_at')
+    list_filter = ('trip_type', 'transport_type', 'created_at', 'pickup_location')
+    search_fields = ('first_name', 'last_name', 'email', 'phone')
+    readonly_fields = ('price', 'created_at')
     inlines = [TripLegInline]
-
-    list_display = (
-        "id", "created_at",
-        "first_name", "last_name",
-        "trip_type", "transport_type",
-        "pickup_location", "dropoff_location",
-        "passenger_count",
-        "price",
-        "email", "phone",
-        "summary_leg_preview",  # shows in list view too
-    )
-    list_filter = (
-        "trip_type", "transport_type",
-        ("pickup_location", admin.RelatedOnlyFieldListFilter),
-        ("dropoff_location", admin.RelatedOnlyFieldListFilter),
-        "created_at",
-    )
-    search_fields = (
-        "first_name", "last_name",
-        "email", "phone",
-        "notes", "flight_number",
-        "pickup_address", "dropoff_address",
-    )
-    ordering = ("-created_at",)
-    readonly_fields = ("created_at", "price", "summary_leg_preview")
-    autocomplete_fields = ("pickup_location", "dropoff_location")
-
     fieldsets = (
-        ("Trip Overview", {
-            "fields": (
-                ("trip_type", "transport_type"),
-                ("pickup_location", "dropoff_location"),
-                ("pickup_time", "return_time"),
-                "summary_leg_preview",
-            )
-        }),
-        ("Addresses (Outbound summary on Booking)", {
-            "fields": ("pickup_address", "dropoff_address")
-        }),
-        ("Passenger & Extras", {
-            "fields": (
-                ("adults", "children", "luggage"),
-                ("booster_seats", "flight_number"),
-                ("checkin_date", "checkout_date"),
-            )
-        }),
-        ("Customer", {
-            "fields": (
-                ("first_name", "last_name"),
-                ("email", "country_code", "phone"),
-            )
-        }),
-        ("Pricing & Meta", {
-            "fields": ("promo_code", "notes", "price", "created_at")
-        }),
+        ('Trip Summary', {'fields': ('trip_type', 'transport_type', 'pickup_location', 'dropoff_location', 'price', 'created_at')}),
+        ('Contact Information', {'fields': ('first_name', 'last_name', 'email', ('country_code', 'phone'))}),
+        ('Passenger & Flight Details', {'fields': (('adults', 'children', 'luggage'), 'flight_number', 'booster_seats')}),
+        ('Dates & Times', {'fields': ('checkin_date', 'pickup_time', 'checkout_date', 'return_time')}),
+        ('Additional Info', {'fields': ('promo_code', 'notes')}),
     )
 
-    def passenger_count(self, obj):
-        return (obj.adults or 0) + (obj.children or 0)
-    passenger_count.short_description = "Passengers"
+    def customer_name(self, obj):
+        return f"{obj.first_name} {obj.last_name}"
+    customer_name.short_description = 'Customer'
 
-    def summary_leg_preview(self, obj):
-        # If TripLeg has related_name="legs"
-        legs = obj.legs.all().order_by("sequence")
-        if legs.exists():
-            return " / ".join([f"{leg.pickup_location} → {leg.dropoff_location}" for leg in legs])
-        return "No legs"
-
+    def trip_summary(self, obj):
+        return f"{obj.pickup_location} → {obj.dropoff_location}"
+    trip_summary.short_description = 'Route'
